@@ -1,4 +1,4 @@
-# LoRA the Explorer - for advanced FLUX LoRA manipulation
+# LoRA the Explorer - advanced FLUX LoRA manipulation
 
 ![LoRA the Explorer Banner](https://img.shields.io/badge/LoRA-the%20Explorer-blue?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3.8+-green?style=for-the-badge&logo=python)
