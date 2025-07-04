@@ -1,0 +1,19 @@
+# Only dependencies NOT in sd-scripts requirements.txt
+gradio>=4.0.0
+torch
+torchvision
+
+# GUI-specific dependencies
+pyyaml
+tqdm
+
+# Critical dependencies that might not install from sd-scripts
+opencv-python
+toml==0.10.2
+imagesize==1.4.1
+
+# LoRA-specific dependencies not in sd-scripts
+lycoris-lora==1.8.3
+omegaconf
+k-diffusion
+peft
