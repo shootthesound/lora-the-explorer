@@ -187,16 +187,6 @@ Re-occurring supporters get early access to test new features as milestones aris
 ### Feedback Welcome
 Found a bug? Have a feature request? Want to share results? All feedback helps improve the tool for everyone. Emails to pneill@gmail.com.
 
-## 🤝 Contributing
-
-We welcome contributions! Areas for improvement:
-- GUI enhancements and user experience
-- Advanced layer analysis research
-- Performance optimizations
-- Documentation improvements
-- Testing with different LoRA types
-- New preset combinations for layer targeting
-
 ## 📄 License
 
 MIT License - see [LICENSE](LICENSE) for details.
