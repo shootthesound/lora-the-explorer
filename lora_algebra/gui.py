@@ -127,7 +127,7 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
                 gr.Markdown("""
                 ## LoRA the Explorer
                 
-                This tool provides various LoRA manipulation techniques including subtraction, merging, targeted layer merging between LoRAs, layer targeting for zeroing and analysis.  It's designed to help you create compatible LoRAs and experiment with different combination approaches.
+                This tool provides various LoRA manipulation techniques including subtraction, merging, targeted layer merging between LoRAs, layer targeting for zeroing and analysis. It's designed to help you create compatible LoRAs and experiment with different combination approaches.
                 """)
                 
                 with gr.Row():
