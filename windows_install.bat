@@ -1,6 +1,6 @@
 @echo off
 title LoRA the Explorer - Installation
-echo (This installer file is best run as administrator by right-clicking on it)
+
 echo.
 echo ===============================================
 echo    LoRA the Explorer - Installation
