@@ -1,10 +1,10 @@
-# LoRA the Explorer
+# LoRA the Explorer - for advanced FLUX LoRA manipulation
 
 ![LoRA the Explorer Banner](https://img.shields.io/badge/LoRA-the%20Explorer-blue?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3.8+-green?style=for-the-badge&logo=python)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
-This tool provides various LoRA manipulation techniques including subtraction, merging, layer targeting, and analysis. It's designed to help you create compatible LoRAs and experiment with different combination approaches.
+This tool provides various FLUX LoRA manipulation techniques including subtraction, merging, layer targeting, and analysis. It's designed to help you create compatible LoRAs and experiment with different combination approaches.
 
 ## What You Can Do:
 
