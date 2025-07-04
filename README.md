@@ -29,6 +29,10 @@ cd lora-the-explorer
 
 # Run the installer
 python install.py
+
+or
+
+Double click on windows_install.bat
 ```
 
 This will:
