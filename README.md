@@ -206,6 +206,10 @@ LoRA the Explorer relies on [sd-scripts by kohya-ss](https://github.com/kohya-ss
 
 Special thanks to kohya-ss and the sd-scripts community for creating and maintaining this essential toolkit.
 
+**Demo Image LoRAs:**
+- [Eurasian Golden Oriole](https://civitai.green/models/1668493/eurasian-golden-oriole?modelVersionId=1888520) by hloveex30w126 on CivitAI
+- [Fantasy LoRA](https://civitai.green/models/789313?modelVersionId=1287297) by ArsMachina on CivitAI
+
 ## 🔬 Technical Notes
 
 ### Mathematical Foundation
