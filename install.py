@@ -312,7 +312,7 @@ def main():
     python_exe = get_python_executable()
     print(f"   📱 GUI: {python_exe} lora_algebra_gui.py")
     print()
-    print("🔗 Project: https://github.com/your-username/lora-the-explorer")
+    print("🔗 Project: https://github.com/shootthesound/lora-the-explorer")
     
     if sd_scripts_path:
         print(f"📁 sd-scripts: {sd_scripts_path.absolute()}")
