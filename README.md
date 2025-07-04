@@ -8,7 +8,7 @@ This tool provides various FLUX LoRA manipulation techniques including subtracti
 
 ## What You Can Do:
 
-<img src="https://raw.githubusercontent.com/shootthesound/lora-the-explorer/main/demo.jpg" alt="Demo image created using layer-based LoRA merging in the app. See Loras merged in Credits further down the page." width="300" align="right" style="margin-left: 20px; margin-bottom: 10px;">
+<img src="https://raw.githubusercontent.com/shootthesound/lora-the-explorer/main/demo.jpg" alt="Demo image created using layer-based LoRA merging in the app. See Loras merged in Credits further down the page." width="400" align="right" style="margin-left: 20px; margin-bottom: 10px;">
 
 - **LoRA Subtraction**: Remove conflicts between LoRAs
 - **Traditional Merging**: Combine LoRAs with custom weights (auto-detects incompatibilities)
