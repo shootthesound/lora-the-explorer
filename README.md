@@ -4,7 +4,7 @@
 ![Python](https://img.shields.io/badge/Python-3.8+-green?style=for-the-badge&logo=python)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
-This tool provides various FLUX LoRA manipulation techniques including subtraction, merging, layer targeting, and analysis. It's designed to help you create compatible LoRAs and experiment with different combination approaches.
+This tool provides various FLUX LoRA manipulation techniques including subtraction, merging, targeted layer merging between LoRAs, layer targeting for zeroing and analysis. It's designed to help you create compatible LoRAs and experiment with different combination approaches.
 
 ## What You Can Do:
 
