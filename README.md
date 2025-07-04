@@ -139,10 +139,7 @@ Use the LoRA MetaEditor for advanced metadata management:
 2. **Add missing information**: Training details, base model versions, custom tags
 3. **Remove sensitive data**: Clean out unwanted metadata fields
 4. **Standardize collections**: Ensure consistent metadata across your LoRA library
-
 ⚠️ **MetaEditor Safety**: Always backup your LoRAs before editing metadata. Incorrect changes can break your LoRAs permanently.
-- **Wonder Woman outfit, no Gal Gadot face**: Use layer targeting
-- **Anime character clothes, no specific face**: Create universal character LoRAs
 
 ### Advanced Combinations
 - Mix facial features from one LoRA with style from another using layer-based merging
@@ -165,7 +162,7 @@ LoRA the Explorer works with FLUX's layer architecture:
 
 ### Subtraction Sweet Spot
 ```
-Optimal_Subtraction_Strength = Normal_Usage_Strength × 0.85
+Optimal_Subtraction_Strength = Normal_Usage_Strength × 0.9 to 1.0
 ```
 
 ### Layer Targeting Strategy
