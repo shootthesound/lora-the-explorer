@@ -18,7 +18,7 @@ setup(
     description="Advanced FLUX LoRA manipulation toolkit with GUI interface for layer targeting, subtraction, and compatibility fixes",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/your-username/lora-the-explorer",
+    url="https://github.com/shootthesound/lora-the-explorer",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -58,9 +58,9 @@ setup(
     zip_safe=False,
     keywords="lora, flux, stable-diffusion, ai, gui, layer-targeting",
     project_urls={
-        "Bug Reports": "https://github.com/your-username/lora-the-explorer/issues",
-        "Documentation": "https://github.com/your-username/lora-the-explorer/blob/main/README.md",
-        "Source": "https://github.com/your-username/lora-the-explorer",
+        "Bug Reports": "https://github.com/shootthesound/lora-the-explorer/issues",
+        "Documentation": "https://github.com/shootthesound/lora-the-explorer/blob/main/README.md",
+        "Source": "https://github.com/shootthesound/lora-the-explorer",
         "Support": "https://buymeacoffee.com/loratheexplorer",
     },
 )
