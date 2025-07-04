@@ -13,7 +13,7 @@ from pathlib import Path
 
 def run_command(command, description, check=True):
     """Run a command with nice output"""
-    print(f"🔧 {description}...")
+    print(f" {description}...")
     try:
         if isinstance(command, str):
             result = subprocess.run(command, shell=True, check=check, capture_output=True, text=True)
@@ -21,10 +21,10 @@ def run_command(command, description, check=True):
             result = subprocess.run(command, check=check, capture_output=True, text=True)
         
         if result.stdout:
-            print(f"   ✅ {result.stdout.strip()}")
+            print(f"    {result.stdout.strip()}")
         return result
     except subprocess.CalledProcessError as e:
-        print(f"   ❌ Error: {e}")
+        print(f"    Error: {e}")
         if e.stderr:
             print(f"   Error details: {e.stderr.strip()}")
         if check:
@@ -35,11 +35,11 @@ def check_python_version():
     """Check if Python version is compatible"""
     version = sys.version_info
     if version.major < 3 or (version.major == 3 and version.minor < 8):
-        print("❌ Python 3.8 or higher is required")
+        print(" Python 3.8 or higher is required")
         print(f"   Current version: {version.major}.{version.minor}.{version.micro}")
         sys.exit(1)
     
-    print(f"✅ Python {version.major}.{version.minor}.{version.micro} - Compatible")
+    print(f" Python {version.major}.{version.minor}.{version.micro} - Compatible")
     return True
 
 def create_virtual_environment():
@@ -47,19 +47,19 @@ def create_virtual_environment():
     env_path = Path("env")
     
     if env_path.exists():
-        print("📁 Virtual environment already exists")
+        print(" Virtual environment already exists")
         return env_path
     
-    print("🐍 Creating Python virtual environment...")
+    print(" Creating Python virtual environment...")
     
     # Create virtual environment
     result = run_command([sys.executable, "-m", "venv", "env"], "Creating virtual environment")
     
     if result.returncode == 0:
-        print("   ✅ Virtual environment created successfully")
+        print("    Virtual environment created successfully")
         return env_path
     else:
-        print("   ❌ Failed to create virtual environment")
+        print("    Failed to create virtual environment")
         sys.exit(1)
 
 def get_python_executable():
@@ -82,10 +82,10 @@ def install_dependencies():
     python_exe = get_python_executable()
     
     if not pip_exe.exists():
-        print("❌ pip not found in virtual environment")
+        print(" pip not found in virtual environment")
         sys.exit(1)
     
-    print("📦 Installing dependencies...")
+    print(" Installing dependencies...")
     
     # Upgrade pip first using python -m pip (more reliable on Windows)
     run_command([str(python_exe), "-m", "pip", "install", "--upgrade", "pip"], "Upgrading pip", check=False)
@@ -129,38 +129,38 @@ def create_launcher_scripts():
     if platform.system() == "Windows":
         # Windows batch file
         launcher_content = f"""@echo off
-echo 🧭 Launching LoRA the Explorer GUI...
+echo  Launching LoRA the Explorer GUI...
 "{python_exe.absolute()}" lora_algebra_gui.py
 pause
 """
         with open("start_gui.bat", "w") as f:
             f.write(launcher_content)
         
-        print("✅ Created Windows launcher script:")
-        print("   📱 start_gui.bat - Launch GUI")
+        print(" Created Windows launcher script:")
+        print("    start_gui.bat - Launch GUI")
         
     else:
         # Unix shell script
         launcher_content = f"""#!/bin/bash
-echo "🧭 Launching LoRA the Explorer GUI..."
+echo " Launching LoRA the Explorer GUI..."
 "{python_exe.absolute()}" lora_algebra_gui.py
 """
         with open("start_gui.sh", "w") as f:
             f.write(launcher_content)
         os.chmod("start_gui.sh", 0o755)
         
-        print("✅ Created Unix launcher script:")
-        print("   📱 start_gui.sh - Launch GUI")
+        print(" Created Unix launcher script:")
+        print("    start_gui.sh - Launch GUI")
 
 def download_sd_scripts():
     """Download and set up sd-scripts"""
     sd_scripts_path = Path("sd-scripts")
     
     if sd_scripts_path.exists() and (sd_scripts_path / "networks").exists():
-        print("✅ sd-scripts already installed")
+        print(" sd-scripts already installed")
         return sd_scripts_path
     
-    print("📥 Downloading sd-scripts...")
+    print(" Downloading sd-scripts...")
     
     # Clone sd-scripts repository (sd3 branch with Flux support)
     clone_result = run_command([
@@ -172,7 +172,7 @@ def download_sd_scripts():
     
     if clone_result.returncode == 0:
         # Pin to specific commit for version stability
-        print("📌 Pinning sd-scripts to tested commit...")
+        print(" Pinning sd-scripts to tested commit...")
         
         # Change to sd-scripts directory to run git checkout
         original_dir = os.getcwd()
@@ -185,14 +185,14 @@ def download_sd_scripts():
             os.chdir(original_dir)
     
     if clone_result.returncode != 0:
-        print("❌ Failed to clone sd-scripts. Trying alternative method...")
+        print(" Failed to clone sd-scripts. Trying alternative method...")
         
         # Alternative: download as zip
         try:
             import urllib.request
             import zipfile
             
-            print("📥 Downloading sd-scripts sd3 branch as ZIP...")
+            print(" Downloading sd-scripts sd3 branch as ZIP...")
             url = "https://github.com/kohya-ss/sd-scripts/archive/refs/heads/sd3.zip"
             zip_path = "sd-scripts-sd3.zip"
             
@@ -207,17 +207,17 @@ def download_sd_scripts():
             
             # Clean up
             Path(zip_path).unlink()
-            print("✅ sd-scripts downloaded successfully")
+            print(" sd-scripts downloaded successfully")
             
         except Exception as e:
-            print(f"❌ Failed to download sd-scripts: {e}")
+            print(f" Failed to download sd-scripts: {e}")
             print("   Please manually download from: https://github.com/kohya-ss/sd-scripts")
             print("   Extract to: ./sd-scripts/")
             return None
     
     # Install sd-scripts requirements and package
     if sd_scripts_path.exists():
-        print("📦 Installing sd-scripts dependencies...")
+        print(" Installing sd-scripts dependencies...")
         pip_exe = get_pip_executable()
         python_exe = get_python_executable()
         
@@ -231,15 +231,15 @@ def download_sd_scripts():
             print("   Warning: sd-scripts requirements.txt not found")
         
         # Install sd-scripts as editable package
-        print("📦 Installing sd-scripts library...")
+        print(" Installing sd-scripts library...")
         install_result = run_command([
             str(pip_exe), "install", "-e", str(sd_scripts_path)
         ], "Installing sd-scripts library", check=False)
         
         # Verify installation by checking if library module can be imported
-        print("🔍 Verifying sd-scripts installation...")
+        print(" Verifying sd-scripts installation...")
         verify_result = run_command([
-            str(python_exe), "-c", f"import sys; sys.path.insert(0, '{sd_scripts_path}'); import library.utils; print('✅ sd-scripts library verified')"
+            str(python_exe), "-c", f"import sys; sys.path.insert(0, '{sd_scripts_path}'); import library.utils; print(' sd-scripts library verified')"
         ], "Verifying library module", check=False)
         
         if verify_result.returncode == 0:
@@ -252,18 +252,18 @@ def download_sd_scripts():
                 
                 if fixed_file.exists() and target_file.exists():
                     shutil.copy2(str(fixed_file), str(target_file))
-                    print("✅ FLUX metadata fix applied (networks.lora_flux)")
+                    print(" FLUX metadata fix applied (networks.lora_flux)")
                 elif not fixed_file.exists():
-                    print("⚠️  Fixed file not found in fixed_files directory")
+                    print("  Fixed file not found in fixed_files directory")
                 elif not target_file.exists():
-                    print("⚠️  Target file not found in sd-scripts")
+                    print("  Target file not found in sd-scripts")
             except Exception as e:
-                print(f"⚠️  Could not apply FLUX metadata fix: {e}")
+                print(f"️  Could not apply FLUX metadata fix: {e}")
                 print("   LoRAs may have incorrect network module metadata")
             
-            print("✅ sd-scripts setup complete")
+            print(" sd-scripts setup complete")
         else:
-            print("⚠️  sd-scripts installed but library verification failed")
+            print("  sd-scripts installed but library verification failed")
             print("   This may cause issues with LoRA operations")
         
         return sd_scripts_path
@@ -272,7 +272,7 @@ def download_sd_scripts():
 
 def main():
     """Main installation process"""
-    print("🧭 LoRA the Explorer Installation")
+    print("LoRA the Explorer Installation")
     print("=" * 50)
     print()
     
@@ -297,25 +297,25 @@ def main():
     print()
     
     # Success message
-    print("🎉 Installation Complete!")
+    print(" Installation Complete!")
     print("=" * 50)
     print()
-    print("🚀 Quick Start:")
+    print(" Quick Start:")
     
     if platform.system() == "Windows":
-        print("   📱 GUI: Double-click start_gui.bat")
+        print("    GUI: Double-click start_gui.bat")
     else:
-        print("   📱 GUI: ./start_gui.sh")
+        print("    GUI: ./start_gui.sh")
     
     print()
-    print("📚 Manual command:")
+    print(" Manual command:")
     python_exe = get_python_executable()
-    print(f"   📱 GUI: {python_exe} lora_algebra_gui.py")
+    print(f"    GUI: {python_exe} lora_algebra_gui.py")
     print()
     print("🔗 Project: https://github.com/shootthesound/lora-the-explorer")
     
     if sd_scripts_path:
-        print(f"📁 sd-scripts: {sd_scripts_path.absolute()}")
+        print(f" sd-scripts: {sd_scripts_path.absolute()}")
     
     print()
 
@@ -323,8 +323,8 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\n❌ Installation cancelled by user")
+        print("\n Installation cancelled by user")
         sys.exit(1)
     except Exception as e:
-        print(f"\n❌ Installation failed: {e}")
+        print(f"\n Installation failed: {e}")
         sys.exit(1)
