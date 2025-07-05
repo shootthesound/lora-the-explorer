@@ -130,6 +130,38 @@ def create_launcher_scripts():
         # Windows batch file
         launcher_content = f"""@echo off
 echo  Launching LoRA the Explorer GUI...
+echo.
+
+REM Check for updates if git is available (non-blocking)
+git --version >nul 2>&1
+if not errorlevel 1 (
+    git status >nul 2>&1
+    if not errorlevel 1 (
+        echo [INFO] Checking for updates...
+        git fetch >nul 2>&1
+        if not errorlevel 1 (
+            git status -uno | findstr "Your branch is behind" >nul 2>&1
+            if not errorlevel 1 (
+                echo.
+                echo ===============================================
+                echo    UPDATE AVAILABLE!
+                echo ===============================================
+                echo.
+                echo A newer version of LoRA the Explorer is available.
+                echo Run update.bat to get the latest features and fixes.
+                echo.
+                echo Press any key to continue launching the GUI...
+                pause >nul
+                echo.
+            ) else (
+                echo [OK] You are running the latest version
+                echo.
+            )
+        )
+    )
+)
+
+echo Starting GUI...
 "{python_exe.absolute()}" lora_algebra_gui.py
 pause
 """
@@ -143,6 +175,34 @@ pause
         # Unix shell script
         launcher_content = f"""#!/bin/bash
 echo " Launching LoRA the Explorer GUI..."
+echo
+
+# Check for updates if git is available (non-blocking)
+if command -v git >/dev/null 2>&1; then
+    if git status >/dev/null 2>&1; then
+        echo "[INFO] Checking for updates..."
+        if git fetch >/dev/null 2>&1; then
+            if git status -uno | grep -q "Your branch is behind"; then
+                echo
+                echo "==============================================="
+                echo "    UPDATE AVAILABLE!"
+                echo "==============================================="
+                echo
+                echo "A newer version of LoRA the Explorer is available."
+                echo "Run 'git pull' to get the latest features and fixes."
+                echo
+                echo "Press any key to continue launching the GUI..."
+                read -n 1 -s
+                echo
+            else
+                echo "[OK] You are running the latest version"
+                echo
+            fi
+        fi
+    fi
+fi
+
+echo "Starting GUI..."
 "{python_exe.absolute()}" lora_algebra_gui.py
 """
         with open("start_gui.sh", "w") as f:
