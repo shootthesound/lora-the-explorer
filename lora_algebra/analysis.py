@@ -103,11 +103,11 @@ def predict_compatibility(lora_a_path: str, lora_b_path: str) -> Dict[str, Any]:
     elif compatibility_score > 0.4:
         status = "Limited Compatibility"
         confidence = compatibility_score
-        recommendations.append("Consider using LoRA subtraction to resolve conflicts")
+        recommendations.append("Consider using LoRA difference to resolve conflicts")
     else:
         status = "Incompatible"
         confidence = compatibility_score
-        recommendations.append("Strong recommendation to use LoRA subtraction for conflict resolution")
+        recommendations.append("Strong recommendation to use LoRA difference for conflict resolution")
     
     if not issues:
         issues.append("No major compatibility issues detected")
@@ -180,10 +180,10 @@ def analyze_multiple_loras(lora_paths: List[str]) -> Dict[str, Any]:
         recommendations.append("All LoRAs show good compatibility - can be used together")
     elif avg_score > 0.5:
         recommendations.append("Some LoRAs may conflict - consider adjusting strengths")
-        recommendations.append("Use LoRA subtraction to resolve specific conflicts")
+        recommendations.append("Use LoRA difference to resolve specific conflicts")
     else:
         recommendations.append("Multiple compatibility issues detected")
-        recommendations.append("Strong recommendation to use LoRA subtraction workflow")
+        recommendations.append("Strong recommendation to use LoRA difference workflow")
         recommendations.append("Consider processing LoRAs in pairs before combining all")
     
     return {

@@ -15,7 +15,7 @@ setup(
     version="1.0.0",
     author="LoRA the Explorer",
     author_email="pneill@gmail.com",
-    description="Advanced FLUX LoRA manipulation toolkit with GUI interface for layer targeting, subtraction, and compatibility fixes",
+    description="Advanced FLUX LoRA manipulation toolkit with GUI interface for layer targeting, difference operations, and compatibility fixes",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/shootthesound/lora-the-explorer",

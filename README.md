@@ -4,13 +4,13 @@
 ![Python](https://img.shields.io/badge/Python-3.8+-green?style=for-the-badge&logo=python)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
-This tool provides various FLUX LoRA manipulation techniques including subtraction, merging, targeted layer merging between LoRAs, layer targeting for zeroing and analysis. It's designed to help you create compatible LoRAs and experiment with different combination approaches.
+This tool provides various FLUX LoRA manipulation techniques including difference operations, merging, targeted layer merging between LoRAs, layer targeting for zeroing and analysis. It's designed to help you create compatible LoRAs and experiment with different combination approaches.
 
 ## What You Can Do:
 
 <img src="https://raw.githubusercontent.com/shootthesound/lora-the-explorer/main/demo.jpg" alt="Demo image created using layer-based LoRA merging in the app. See Loras merged in Credits further down the page." width="400" align="right" style="margin-left: 20px; margin-bottom: 10px;">
 
-- **LoRA Subtraction**: Remove conflicts between LoRAs
+- **LoRA Difference**: Remove conflicts between LoRAs
 - **Traditional Merging**: Combine LoRAs with custom weights (auto-detects incompatibilities)
 - **Layer-Based Merging**: Surgically combine specific layers from different LoRAs
 - **Layer Targeting**: Selectively mute facial or style layers
@@ -49,6 +49,7 @@ This will:
 ### Quick Launch
 ```bash
 # Windows: Double-click start_gui.bat
+# Unix/macOS: ./start_gui.sh
 # Or manually:
 python lora_algebra_gui.py
 ```
@@ -71,11 +72,11 @@ The `update.bat` script automatically:
 
 1. **Set up paths**: Use the "LoRA Paths" tab to scan your LoRA directory for autocomplete, and choose your default save directory
 2. **Experiment**: Try different operations - each tab has usage guides and presets
-3. **Start simple**: Begin with basic merging or subtraction or trying advanced layer techniques. My tip is to find a great style lora and merge a character into it with face layers.
+3. **Start simple**: Begin with basic merging or difference operations or trying advanced layer techniques. My tip is to find a great style lora and merge a character into it with face layers.
 
 ## 🎯 Key Features
 
-### LoRA Subtraction
+### LoRA Difference
 Remove unwanted influences from LoRAs:
 ```
 Style_LoRA - Character_LoRA = Clean_Style_LoRA
@@ -134,7 +135,7 @@ Direct metadata editing with full control:
 ## 💡 Use Cases
 
 ### Style LoRA Cleaning
-Use the LoRA Subtraction tab to remove face changes from style LoRAs:
+Use the LoRA Difference tab to remove face changes from style LoRAs:
 1. Load your style LoRA as "LoRA A" 
 2. Load a character/face LoRA as "LoRA B"
 3. Set strength B to ~0.7 (85% of normal usage)
@@ -177,9 +178,9 @@ LoRA the Explorer works with FLUX's layer architecture:
 
 ## 💡 Tips & Best Practices
 
-### Subtraction Sweet Spot
+### Difference Sweet Spot
 ```
-Optimal_Subtraction_Strength = Normal_Usage_Strength × 0.9 to 1.0
+Optimal_Difference_Strength = Normal_Usage_Strength × 0.9 to 1.0
 ```
 
 ### Layer Targeting Strategy
@@ -228,7 +229,7 @@ Special thanks to kohya-ss and the sd-scripts community for creating and maintai
 ### Mathematical Foundation
 LoRAs modify model weights as: `W_new = W_original + α(BA)`
 
-Subtraction operation: `LoRA_A - LoRA_B = A₁B₁ - A₂B₂`
+Difference operation: `LoRA_A - LoRA_B = A₁B₁ - A₂B₂`
 
 This removes overlapping parameter modifications while preserving unique characteristics.
 

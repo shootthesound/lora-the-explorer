@@ -1,5 +1,5 @@
 """
-LoRA mathematical operations (subtract, merge, etc.)
+LoRA mathematical operations (difference, merge, etc.)
 """
 
 import os
@@ -111,7 +111,7 @@ def subtract_loras(
         script_path,
         "--save_to", output_path,
         "--models", lora_a_path, lora_b_path,
-        "--ratios", str(strength_a), str(-strength_b),  # Negative for subtraction
+        "--ratios", str(strength_a), str(-strength_b),  # Negative for difference
         "--save_precision", "fp16"
     ]
     

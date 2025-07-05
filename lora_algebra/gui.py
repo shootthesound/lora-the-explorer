@@ -200,18 +200,19 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
                         )
             
             # LoRA Subtraction Tab
-            with gr.TabItem("🔺 LoRA Subtraction"):
+            with gr.TabItem("🔺 LoRA Difference"):
                 gr.Markdown("""
-                ### LoRA Compatibility tool
+                ### LoRA Difference Tool
                 
-                **Subtract one LoRA from another to help remove conflicts and create compatible versions.**
+                **Find the difference between two LoRAs to isolate specific concepts or remove conflicts.**
                 
                 **Perfect for:**
                 - Removing face changes from style LoRAs
                 - Creating character-neutral styles  
+                - Isolating outfits/concepts (same character trained general vs. specific outfit)
                 - Fixing LoRA interference issues
                 - Can be useful pre layer merging as a possible approach to improve performance
-                - As always experimentig is key
+                - As always experimenting is key
                 """)
                 
                 with gr.Row():
@@ -286,16 +287,22 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
                     with gr.Column():
                         gr.Markdown("#### 💡 How to Use")
                         gr.Markdown("""
-                        **Example: Clean a style LoRA that changes faces**
+                        **Example 1: Clean a style LoRA that changes faces**
                         
                         1. **LoRA A**: Your style LoRA (e.g., `anime_style.safetensors`)
                         2. **LoRA B**: A character/face LoRA (e.g., `face_lora.safetensors`)
                         3. **Strength B**: Set to ~0.7 if you normally use face LoRA at 0.8
                         4. **Result**: Style LoRA without face interference
                         
+                        **Example 2: Isolate outfit/concept**
+                        
+                        1. **LoRA A**: Character in specific outfit (e.g., `alice_in_dress.safetensors`)
+                        2. **LoRA B**: Same character general (e.g., `alice_general.safetensors`)
+                        3. **Result**: Just the dress/outfit concept isolated
+                        
                         **The Sweet Spot Formula:**
                         ```
-                        Subtract Strength = Normal Usage × 0.85
+                        Difference Strength = Normal Usage × 0.85
                         ```
                         """)
                         
