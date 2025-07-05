@@ -36,7 +36,10 @@ class LoRACache:
             # Use existing utility function to find LoRA files recursively
             found_files = find_lora_files(directory, recursive=True)
             
-            # Update cache
+            # Clear only the old paths, not the directory
+            self.lora_paths = []
+            
+            # Update cache with new data
             self.lora_paths = found_files
             self.scan_directory = directory
             
