@@ -49,7 +49,6 @@ This will:
 ### Quick Launch
 ```bash
 # Windows: Double-click start_gui.bat
-# Unix/macOS: ./start_gui.sh
 # Or manually:
 python lora_algebra_gui.py
 ```
