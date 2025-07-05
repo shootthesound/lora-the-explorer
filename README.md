@@ -54,6 +54,20 @@ This will:
 python lora_algebra_gui.py
 ```
 
+### Keeping Updated
+```bash
+# Windows: Double-click update.bat
+# Or manually:
+git pull
+```
+
+The `update.bat` script automatically:
+- ✅ Checks for Git availability
+- ✅ Validates you're in a git repository
+- ✅ Fetches latest changes from the repository
+- ✅ Applies updates with clear status messages
+- ✅ Handles errors gracefully with helpful guidance
+
 ## 🎮 Getting Started
 
 1. **Set up paths**: Use the "LoRA Paths" tab to scan your LoRA directory for autocomplete, and choose your default save directory
