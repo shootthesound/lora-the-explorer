@@ -129,6 +129,7 @@ def create_launcher_scripts():
     if platform.system() == "Windows":
         # Windows batch file
         launcher_content = f"""@echo off
+setlocal EnableDelayedExpansion
 echo  Launching LoRA the Explorer GUI...
 echo.
 
@@ -140,21 +141,29 @@ if not errorlevel 1 (
         echo [INFO] Checking for updates...
         git fetch >nul 2>&1
         if not errorlevel 1 (
-            git status -uno | findstr "Your branch is behind" >nul 2>&1
+            REM Check if we have an upstream branch configured
+            git rev-parse --abbrev-ref @{{u}} >nul 2>&1
             if not errorlevel 1 (
-                echo.
-                echo ===============================================
-                echo    UPDATE AVAILABLE!
-                echo ===============================================
-                echo.
-                echo A newer version of LoRA the Explorer is available.
-                echo Run update.bat to get the latest features and fixes.
-                echo.
-                echo Press any key to continue launching the GUI...
-                pause >nul
-                echo.
+                REM Count commits behind using rev-list
+                for /f %%i in ('git rev-list --count HEAD..@{{u}} 2^>nul') do set BEHIND_COUNT=%%i
+                if not "!BEHIND_COUNT!"=="0" if not "!BEHIND_COUNT!"=="" (
+                    echo.
+                    echo ===============================================
+                    echo    UPDATE AVAILABLE!
+                    echo ===============================================
+                    echo.
+                    echo A newer version of LoRA the Explorer is available.
+                    echo Run update.bat to get the latest features and fixes.
+                    echo.
+                    echo Press any key to continue launching the GUI...
+                    pause >nul
+                    echo.
+                ) else (
+                    echo [OK] You are running the latest version
+                    echo.
+                )
             ) else (
-                echo [OK] You are running the latest version
+                echo [INFO] No upstream branch configured, skipping update check
                 echo.
             )
         )
@@ -182,20 +191,28 @@ if command -v git >/dev/null 2>&1; then
     if git status >/dev/null 2>&1; then
         echo "[INFO] Checking for updates..."
         if git fetch >/dev/null 2>&1; then
-            if git status -uno | grep -q "Your branch is behind"; then
-                echo
-                echo "==============================================="
-                echo "    UPDATE AVAILABLE!"
-                echo "==============================================="
-                echo
-                echo "A newer version of LoRA the Explorer is available."
-                echo "Run 'git pull' to get the latest features and fixes."
-                echo
-                echo "Press any key to continue launching the GUI..."
-                read -n 1 -s
-                echo
+            # Check if we have an upstream branch configured
+            if git rev-parse --abbrev-ref @{{u}} >/dev/null 2>&1; then
+                # Count commits behind using rev-list
+                BEHIND_COUNT=$(git rev-list --count HEAD..@{{u}} 2>/dev/null)
+                if [ "$BEHIND_COUNT" -gt 0 ] 2>/dev/null; then
+                    echo
+                    echo "==============================================="
+                    echo "    UPDATE AVAILABLE!"
+                    echo "==============================================="
+                    echo
+                    echo "A newer version of LoRA the Explorer is available."
+                    echo "Run 'git pull' to get the latest features and fixes."
+                    echo
+                    echo "Press any key to continue launching the GUI..."
+                    read -n 1 -s
+                    echo
+                else
+                    echo "[OK] You are running the latest version"
+                    echo
+                fi
             else
-                echo "[OK] You are running the latest version"
+                echo "[INFO] No upstream branch configured, skipping update check"
                 echo
             fi
         fi
