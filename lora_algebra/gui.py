@@ -631,16 +631,19 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
             # Layer Targeting Tab
             with gr.TabItem("🎯 Layer Targeting"):
                 gr.Markdown("""
-                ### FLUX Layer muting
+                ### FLUX Layer Targeting
                 
-                **Selectively mute facial (or style) layers in a single LoRA to preserve one while removing the other.**
+                **Zeros out selected layers to remove unwanted influences from a LoRA.**
 
-                The agressive otpion removes data from more layers. If likeness of a subject beyond that persists, its likely down to spillover in training (possible overtraining), but you will at least be able to reduce the likeness to allow other LoRAs have greater effect in tandem.
+                **Facial Layers**: Removes face knowledge from style/concept LoRAs. Aggressive option zeros out additional layers with face data (can also affect lighting style).
+                
+                **Style Targeting**: Zeros out NON-facial layers, ideal for subject LoRAs where you want to keep likeness but remove style effects.
+                
+                **Note**: Poorly trained or overtrained LoRAs may have face data in other layers that cannot be completely removed, but influence can still be drastically reduced.
                 
                 **Target Layers:**
                 - **Layers 7 & 20**: Primary facial structure and details
-                - **Layers 12 & 16**: Secondary facial features (optional)
-                - **Layers 7,12,16,20**: Apart from facial details, these layers often hold lighting style information which can be useful to target for non-facial loras.
+                - **Layers 12 & 16**: Secondary facial features
 
 
                 """)
@@ -735,36 +738,33 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
                         gr.Markdown("#### 💡 Use Cases & Presets")
                         gr.Markdown("""
                         **🎯 Facial Layers (7,12,16,20):**
-                        - Remove face while keeping style/costume
-                        - Standard approach for character LoRAs
-                        
-                        **🎨 Style Layers (Non-Facial):**
-                        - Preserve artistic style, lighting, composition
-                        - Removes facial features from art style LoRAs
-                        - Best for creating face-neutral artistic LoRAs
+                        - ZEROS OUT facial layers from style/concept LoRAs
+                        - Use on style LoRAs to reduce their facial impact
                         
                         **🔥 Aggressive (4,7,8,12,15,16,19,20):**
-                        - Maximum facial identity removal
-                        - For heavily overtrained LoRAs
-                        - When faces "bleed" into other layers
+                        - ZEROS OUT additional facial layers that may contain face data
+                        - Can sometimes affect lighting style too
+
+                        **🎨 Style Targeting (Non-Facial):**
+                        - ZEROS OUT style layers, keeping only facial data
+                        - Use on character LoRAs to maintain likeness but remove style effects
                         
                         **🔄 Invert Selection:**
                         - Flip current selection instantly
                         - Useful for experimenting with opposite layer sets
                         
-                        **Perfect Applications:**
-                        - 🧙 Character style separation (Gandalf costume, no Ian McKellen face)
-                        - 🎨 Art style cleaning (artistic techniques, no artist's face)  
-                        - 👤 Universal character LoRAs (clothing/poses, no face changes)
-                        - 🖼️ Remove styling from face LoRAs (keep face, remove artistic style/effects)
-                        - ⚡ Clean face LoRAs for maximum flexibility (remove face data from non-facial layers to prevent style interference)
+                        **Common Use Cases:**
+                        - 🎨 Style LoRA → Use Facial targeting to reduce face changes
+                        - 👤 Character LoRA → Use Style targeting to keep face, remove style
+                        - 🧙 Extract costume without face (Gandalf outfit, no Ian McKellen)
+                        - ⚡ Reduce face bleed in overtrained LoRAs
                         """)
                         
                         layer_preview = gr.Textbox(
                             label="Selected Layers to Mute",
                             lines=8,
                             interactive=False,
-                            value="Layers 7, 20 will be muted"
+                            value="Layers 7,12,16,20 will be muted"
                         )
                 
                 target_result = gr.Textbox(
