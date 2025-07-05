@@ -349,7 +349,8 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
                                 minimum=0.1,
                                 maximum=2.0,
                                 value=1.0,
-                                step=0.1
+                                step=0.1,
+                                interactive=True
                             )
                         
                         with gr.Group(elem_classes="operation-section"):
@@ -375,7 +376,8 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
                                 minimum=0.1,
                                 maximum=2.0,
                                 value=1.0,
-                                step=0.1
+                                step=0.1,
+                                interactive=True
                             )
                         
                         with gr.Group(elem_classes="operation-section"):
