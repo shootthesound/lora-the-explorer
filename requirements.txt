@@ -1,5 +1,6 @@
 # Only dependencies NOT in sd-scripts requirements.txt
-gradio>=4.0.0
+gradio>=5.35.0
+gradio_client>=1.10.4
 torch
 torchvision
 
