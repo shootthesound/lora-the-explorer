@@ -450,7 +450,7 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
                                 show_label=True,
                                 elem_classes=["autocomplete-dropdown"]
                             )
-                            merge_strength_a = gr.Slider(
+                            layer_merge_strength_a = gr.Slider(
                                 label="LoRA A Strength",
                                 minimum=0.0,
                                 maximum=2.0,
@@ -474,7 +474,7 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
                                 show_label=True,
                                 elem_classes=["autocomplete-dropdown"]
                             )
-                            merge_strength_b = gr.Slider(
+                            layer_merge_strength_b = gr.Slider(
                                 label="LoRA B Strength", 
                                 minimum=0.0,
                                 maximum=2.0,
@@ -1065,6 +1065,15 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
         
         def handle_merge(lora_a, lora_b, strength_a, strength_b, output, use_concat):
             try:
+                # Debug logging
+                print(f"🎚️ GUI DEBUG: Received strength values - A: {strength_a} (type: {type(strength_a)}), B: {strength_b} (type: {type(strength_b)})")
+                
+                # Ensure strengths are floats
+                strength_a = float(strength_a)
+                strength_b = float(strength_b)
+                
+                print(f"🎚️ GUI DEBUG: After conversion - A: {strength_a}, B: {strength_b}")
+                
                 # Validate inputs
                 valid_a, msg_a = validate_lora_path(lora_a)
                 if not valid_a:
@@ -2249,7 +2258,7 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
         # Layer-based merge event handlers
         merge_layer_button.click(
             fn=handle_layer_merge,
-            inputs=[merge_lora_a_path, merge_lora_b_path, merge_strength_a, merge_strength_b, merge_output_name] + all_merge_checkboxes,
+            inputs=[merge_lora_a_path, merge_lora_b_path, layer_merge_strength_a, layer_merge_strength_b, merge_output_name] + all_merge_checkboxes,
             outputs=merge_layer_result
         )
         
@@ -2281,7 +2290,7 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
         )
         
         # Update merge preview when any checkbox or strength changes
-        merge_inputs = [merge_strength_a, merge_strength_b] + all_merge_checkboxes
+        merge_inputs = [layer_merge_strength_a, layer_merge_strength_b] + all_merge_checkboxes
         
         for checkbox in all_merge_checkboxes:
             checkbox.change(
@@ -2291,13 +2300,13 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
             )
         
         # Also update preview when strength sliders change
-        merge_strength_a.change(
+        layer_merge_strength_a.change(
             fn=update_merge_layer_preview,
             inputs=merge_inputs,
             outputs=merge_layer_preview
         )
         
-        merge_strength_b.change(
+        layer_merge_strength_b.change(
             fn=update_merge_layer_preview,
             inputs=merge_inputs,
             outputs=merge_layer_preview
