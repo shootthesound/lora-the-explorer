@@ -1,4 +1,5 @@
 @echo off
+setlocal EnableDelayedExpansion
 title LoRA the Explorer - Update
 
 echo.
@@ -61,8 +62,19 @@ if errorlevel 1 (
 )
 
 REM Check if there are updates available
-git status -uno | findstr "Your branch is behind" >nul
-if errorlevel 1 (
+set UPDATE_AVAILABLE=0
+
+REM Check if we have an upstream branch configured
+git rev-parse --abbrev-ref @{u} >nul 2>&1
+if not errorlevel 1 (
+    REM Count commits behind using rev-list
+    for /f %%i in ('git rev-list --count HEAD..@{u} 2^>nul') do set BEHIND_COUNT=%%i
+    if not "!BEHIND_COUNT!"=="0" if not "!BEHIND_COUNT!"=="" (
+        set UPDATE_AVAILABLE=1
+    )
+)
+
+if !UPDATE_AVAILABLE!==0 (
     echo [INFO] Already up to date!
     echo No updates available.
     echo.
@@ -83,6 +95,19 @@ if errorlevel 1 (
         echo.
         echo Latest changes have been applied to your LoRA the Explorer installation.
         echo.
+        
+        REM Update launcher scripts to get latest improvements
+        echo [INFO] Updating launcher scripts...
+        python update_launchers.py
+        if errorlevel 1 (
+            echo [WARNING] Failed to update launcher scripts
+            echo Your start_gui.bat may not have the latest improvements.
+            echo You can manually run: python update_launchers.py
+            echo.
+        ) else (
+            echo [OK] Launcher scripts updated
+            echo.
+        )
     )
 )
 
