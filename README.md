@@ -34,11 +34,6 @@ cd lora-the-explorer
 # Run the installer
 python install.py
 
-or
-
-Double click on windows_install.bat
-
-Portable option:  Download the Portabale release on this page (released 5 July 2025)
 ```
 
 This will:
