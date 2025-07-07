@@ -16,7 +16,7 @@ imagesize==1.4.1
 # LoRA-specific dependencies not in sd-scripts
 lycoris-lora==1.8.3
 omegaconf
-scipy==1.16.0
+scipy==1.11.4
 k-diffusion==0.0.16
 peft==0.16.0
 # Pin accelerate to prevent dependency resolution conflicts
