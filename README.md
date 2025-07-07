@@ -24,6 +24,8 @@ This tool provides various FLUX LoRA manipulation techniques including differenc
 
 ## 🛠️ Installation
 
+Latest news: Several updates as of 7/7/25 - 7:25 BST to improve installing on earlier python versions and some dependancy hellscapes. 
+
 ### Automatic Setup (Recommended)
 
 ```bash
