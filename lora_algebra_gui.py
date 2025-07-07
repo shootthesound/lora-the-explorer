@@ -34,7 +34,7 @@ def main():
         # Launch GUI
         launch_gui(
             sd_scripts_path=sd_scripts_path,
-            share=True,
+            share=False,
             inbrowser=True
         )
         
