@@ -302,7 +302,7 @@ def download_sd_scripts():
         sd_requirements = sd_scripts_path / "requirements.txt"
         if sd_requirements.exists():
             run_command([
-                str(pip_exe), "install", "-r", str(sd_requirements)
+                str(pip_exe), "install", "-r", str(sd_requirements), "-c", "constraints.txt"
             ], "Installing sd-scripts requirements", check=False)
         else:
             print("   Warning: sd-scripts requirements.txt not found")
