@@ -101,7 +101,7 @@ def install_dependencies():
         dependencies = [
             "torch==2.7.1",
             "torchvision==0.22.1", 
-            "accelerate==0.33.0",
+            "accelerate==1.8.1",
             "transformers==4.44.0",
             "diffusers[torch]==0.25.0",
             "safetensors==0.4.4",
