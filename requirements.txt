@@ -16,5 +16,6 @@ imagesize==1.4.1
 # LoRA-specific dependencies not in sd-scripts
 lycoris-lora==1.8.3
 omegaconf
+scipy
 k-diffusion
 peft
