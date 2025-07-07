@@ -93,11 +93,6 @@ def install_dependencies():
     # Install wheel for better package building
     run_command([str(pip_exe), "install", "wheel"], "Installing wheel")
     
-    # Install scipy first to ensure we get pre-built wheels on Windows
-    # This prevents build errors when k-diffusion tries to install it
-    print(" Installing scipy (pre-built wheel)...")
-    run_command([str(pip_exe), "install", "scipy>=1.11.0"], "Installing scipy", check=False)
-    
     # Install requirements
     if Path("requirements.txt").exists():
         run_command([str(pip_exe), "install", "-r", "requirements.txt"], "Installing requirements")
@@ -111,7 +106,6 @@ def install_dependencies():
             "diffusers[torch]==0.25.0",
             "safetensors==0.4.4",
             "sentencepiece==0.2.0",
-            "scipy>=1.11.0",  # Added to prevent build errors
             "gradio>=4.0.0",
             "einops==0.7.0",
             "huggingface-hub==0.24.5",
@@ -119,11 +113,7 @@ def install_dependencies():
             "numpy>=1.24.0",
             "pyyaml>=6.0.0",
             "pillow>=10.0.0",
-            "tqdm>=4.66.0",
-            "k-diffusion",
-            "omegaconf",
-            "lycoris-lora==1.8.3",
-            "peft"
+            "tqdm>=4.66.0"
         ]
         
         for dep in dependencies:
