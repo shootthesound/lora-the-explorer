@@ -13,13 +13,11 @@ opencv-python
 toml==0.10.2
 imagesize==1.4.1
 
+# Windows compatibility - install scipy before k-diffusion to get pre-built wheels
+scipy>=1.11.0
+
 # LoRA-specific dependencies not in sd-scripts
 lycoris-lora==1.8.3
 omegaconf
-
-# Install scipy before k-diffusion to ensure we get pre-built wheels on Windows
-scipy
-
-# k-diffusion and other dependencies
 k-diffusion
 peft
