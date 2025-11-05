@@ -19,7 +19,8 @@ class LoRAProcessor:
     
     def _run_sd_script(self, script_name: str, args: List[str]) -> Tuple[bool, str]:
         """Run a musubi-tuner script with given arguments"""
-        script_path = os.path.join(self.sd_scripts_path, "networks", script_name)
+        # musubi-tuner has scripts at root level, not in networks/
+        script_path = os.path.join(self.sd_scripts_path, script_name)
 
         if not os.path.exists(script_path):
             return False, f"Script not found: {script_path}"
@@ -103,7 +104,7 @@ def subtract_loras(
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     # Build command for LoRA difference extraction using negative weight
-    script_path = resolve_path_without_quotes("../musubi-tuner/networks/merge_lora.py")
+    script_path = resolve_path_without_quotes("../musubi-tuner/merge_lora.py")
     
     # Use positive weight for A and negative weight for B to get A - B
     command = [

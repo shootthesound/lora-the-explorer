@@ -21,3 +21,9 @@ k-diffusion==0.0.16
 peft==0.16.0
 # Pin accelerate to prevent dependency resolution conflicts
 accelerate==1.8.1
+
+# WAN 2.2 specific dependencies (musubi-tuner may not include these)
+av>=14.0.0           # Video processing for WAN 2.2
+easydict>=1.13       # WAN 2.2 configuration
+ftfy>=6.3.0          # Text preprocessing for WAN 2.2
+voluptuous>=0.15.0   # Config validation

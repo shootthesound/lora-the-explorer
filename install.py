@@ -233,9 +233,14 @@ def download_sd_scripts():
     """Download and set up musubi-tuner"""
     sd_scripts_path = Path("musubi-tuner")
 
-    if sd_scripts_path.exists() and (sd_scripts_path / "networks").exists():
-        print(" musubi-tuner already installed")
-        return sd_scripts_path
+    # Check if musubi-tuner is already installed
+    # Look for either the root merge_lora.py or the module structure
+    if sd_scripts_path.exists():
+        has_merge_script = (sd_scripts_path / "merge_lora.py").exists()
+        has_module = (sd_scripts_path / "src" / "musubi_tuner").exists()
+        if has_merge_script or has_module:
+            print(" musubi-tuner already installed")
+            return sd_scripts_path
 
     print(" Downloading musubi-tuner...")
 
