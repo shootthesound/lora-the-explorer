@@ -92,56 +92,37 @@ def get_pip_executable():
     else:
         return Path("env") / "bin" / "pip"
 
-def detect_gpu():
-    """Detect GPU and determine required CUDA version"""
-    print("🔍 Detecting GPU...")
+def ask_gpu_type():
+    """Ask user which GPU they have"""
+    print("\n🎮 GPU Configuration")
+    print("=" * 70)
+    print()
+    print("Which GPU/hardware do you have?")
+    print()
+    print("1. RTX 5090/5080 (Blackwell - requires CUDA 12.8)")
+    print("2. RTX 4090/4080 or other modern NVIDIA GPU (CUDA 12.1)")
+    print("3. CPU only (no GPU / AMD / Intel)")
+    print()
 
-    try:
-        # Try to detect NVIDIA GPU using nvidia-smi
-        result = subprocess.run(
-            ["nvidia-smi", "--query-gpu=name,compute_cap", "--format=csv,noheader"],
-            capture_output=True,
-            text=True,
-            timeout=5
-        )
+    while True:
+        choice = input("Enter your choice (1-3): ").strip()
 
-        if result.returncode == 0 and result.stdout.strip():
-            gpu_info = result.stdout.strip().split('\n')[0]  # Get first GPU
-            gpu_name = gpu_info.split(',')[0].strip() if ',' in gpu_info else gpu_info
-            compute_cap = gpu_info.split(',')[1].strip() if ',' in gpu_info else None
-
-            print(f"   ✅ Detected: {gpu_name}")
-
-            # Check for RTX 5090/5080 (Blackwell architecture - sm_120)
-            if "RTX 50" in gpu_name or (compute_cap and compute_cap.startswith("12.0")):
-                print(f"   🎮 Blackwell architecture detected (Compute {compute_cap})")
-                print(f"   📦 Will install PyTorch with CUDA 12.8 support")
-                return "cu128", gpu_name
-
-            # Check for RTX 4090/4080 or newer (sm_89+)
-            elif "RTX 40" in gpu_name or (compute_cap and float(compute_cap) >= 8.9):
-                print(f"   🎮 Ada Lovelace/newer architecture (Compute {compute_cap})")
-                print(f"   📦 Will install PyTorch with CUDA 12.1 support")
-                return "cu121", gpu_name
-
-            # Older GPUs
-            else:
-                print(f"   🎮 GPU detected (Compute {compute_cap})")
-                print(f"   📦 Will install PyTorch with CUDA 12.1 support")
-                return "cu121", gpu_name
-        else:
-            print("   ℹ️  No NVIDIA GPU detected or nvidia-smi not available")
-            print("   📦 Will install CPU-only PyTorch")
+        if choice == "1":
+            print("\n✅ Selected: RTX 5090/5080 (Blackwell)")
+            print("   📦 Will install PyTorch with CUDA 12.8 support")
+            print("   💡 Requirements: NVIDIA Driver 570.86+, CUDA Toolkit 12.8")
+            return "cu128", "RTX 5090/5080"
+        elif choice == "2":
+            print("\n✅ Selected: Modern NVIDIA GPU")
+            print("   📦 Will install PyTorch with CUDA 12.1 support")
+            return "cu121", "NVIDIA GPU"
+        elif choice == "3":
+            print("\n✅ Selected: CPU only")
+            print("   📦 Will install CPU-optimized PyTorch")
             return "cpu", "CPU"
-
-    except FileNotFoundError:
-        print("   ℹ️  nvidia-smi not found - installing CPU-only PyTorch")
-        print("   💡 Tip: Install NVIDIA drivers if you have an NVIDIA GPU")
-        return "cpu", "CPU"
-    except Exception as e:
-        print(f"   ⚠️  Could not detect GPU: {e}")
-        print("   📦 Defaulting to CPU-only PyTorch")
-        return "cpu", "CPU"
+        else:
+            print("❌ Invalid choice. Please enter 1, 2, or 3.")
+            print()
 
 def install_dependencies():
     """Install required dependencies"""
@@ -160,11 +141,11 @@ def install_dependencies():
     # Install wheel for better package building
     run_command([str(pip_exe), "install", "wheel"], "Installing wheel")
 
-    # Detect GPU and determine CUDA version
-    cuda_version, gpu_name = detect_gpu()
+    # Ask user about their GPU
+    cuda_version, gpu_name = ask_gpu_type()
 
     # Install PyTorch first with correct CUDA support
-    print(f"\n🔥 Installing PyTorch for {gpu_name}...")
+    print(f"\n🔥 Installing PyTorch 2.9.0 for {gpu_name}...")
 
     if cuda_version == "cu128":
         # RTX 5090/5080 - Blackwell architecture requires CUDA 12.8
