@@ -1,19 +1,36 @@
-# Only dependencies NOT in musubi-tuner requirements.txt
+# LoRA the Explorer - WAN 2.2 Dependencies
+#
+# IMPORTANT FOR RTX 5090 USERS:
+# The installer (install.py) will automatically detect your GPU and install
+# the correct PyTorch build. If installing manually:
+#
+# For RTX 5090/5080 (Blackwell - sm_120):
+#   pip install torch==2.9.0+cu128 torchvision==0.24.0+cu128 --index-url https://download.pytorch.org/whl/cu128
+#
+# For RTX 4090/4080 and modern GPUs:
+#   pip install torch==2.9.0 torchvision==0.24.0 --index-url https://download.pytorch.org/whl/cu121
+#
+# For CPU only:
+#   pip install torch==2.9.0 torchvision==0.24.0 --index-url https://download.pytorch.org/whl/cpu
+
+# PyTorch (installed separately by install.py with correct CUDA version)
+# torch>=2.9.0  # Installed by installer with GPU detection
+# torchvision>=0.24.0  # Installed by installer with GPU detection
+
+# GUI Framework
 gradio>=5.49.1
 gradio_client>=1.10.4
-torch>=2.9.0
-torchvision>=0.24.0
 
-# GUI-specific dependencies
+# Core dependencies
 pyyaml
 tqdm
 
-# Critical dependencies that might not install from musubi-tuner
+# Image/Video processing
 opencv-python>=4.10.0
 toml==0.10.2
 imagesize==1.4.1
 
-# LoRA-specific dependencies not in musubi-tuner
+# LoRA-specific dependencies
 lycoris-lora==1.8.3
 omegaconf
 scipy
@@ -25,7 +42,7 @@ peft==0.16.0
 # If issues occur, downgrade to 1.6.0
 accelerate==1.8.1
 
-# WAN 2.2 specific dependencies (musubi-tuner may not include these)
+# WAN 2.2 specific dependencies
 av>=14.0.0           # Video processing for WAN 2.2
 easydict>=1.13       # WAN 2.2 configuration
 ftfy>=6.3.0          # Text preprocessing for WAN 2.2

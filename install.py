@@ -92,31 +92,124 @@ def get_pip_executable():
     else:
         return Path("env") / "bin" / "pip"
 
+def detect_gpu():
+    """Detect GPU and determine required CUDA version"""
+    print("🔍 Detecting GPU...")
+
+    try:
+        # Try to detect NVIDIA GPU using nvidia-smi
+        result = subprocess.run(
+            ["nvidia-smi", "--query-gpu=name,compute_cap", "--format=csv,noheader"],
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+
+        if result.returncode == 0 and result.stdout.strip():
+            gpu_info = result.stdout.strip().split('\n')[0]  # Get first GPU
+            gpu_name = gpu_info.split(',')[0].strip() if ',' in gpu_info else gpu_info
+            compute_cap = gpu_info.split(',')[1].strip() if ',' in gpu_info else None
+
+            print(f"   ✅ Detected: {gpu_name}")
+
+            # Check for RTX 5090/5080 (Blackwell architecture - sm_120)
+            if "RTX 50" in gpu_name or (compute_cap and compute_cap.startswith("12.0")):
+                print(f"   🎮 Blackwell architecture detected (Compute {compute_cap})")
+                print(f"   📦 Will install PyTorch with CUDA 12.8 support")
+                return "cu128", gpu_name
+
+            # Check for RTX 4090/4080 or newer (sm_89+)
+            elif "RTX 40" in gpu_name or (compute_cap and float(compute_cap) >= 8.9):
+                print(f"   🎮 Ada Lovelace/newer architecture (Compute {compute_cap})")
+                print(f"   📦 Will install PyTorch with CUDA 12.1 support")
+                return "cu121", gpu_name
+
+            # Older GPUs
+            else:
+                print(f"   🎮 GPU detected (Compute {compute_cap})")
+                print(f"   📦 Will install PyTorch with CUDA 12.1 support")
+                return "cu121", gpu_name
+        else:
+            print("   ℹ️  No NVIDIA GPU detected or nvidia-smi not available")
+            print("   📦 Will install CPU-only PyTorch")
+            return "cpu", "CPU"
+
+    except FileNotFoundError:
+        print("   ℹ️  nvidia-smi not found - installing CPU-only PyTorch")
+        print("   💡 Tip: Install NVIDIA drivers if you have an NVIDIA GPU")
+        return "cpu", "CPU"
+    except Exception as e:
+        print(f"   ⚠️  Could not detect GPU: {e}")
+        print("   📦 Defaulting to CPU-only PyTorch")
+        return "cpu", "CPU"
+
 def install_dependencies():
     """Install required dependencies"""
     pip_exe = get_pip_executable()
     python_exe = get_python_executable()
-    
+
     if not pip_exe.exists():
-        print(" pip not found in virtual environment")
+        print("❌ pip not found in virtual environment")
         sys.exit(1)
-    
-    print(" Installing dependencies...")
-    
+
+    print("\n📦 Installing dependencies...")
+
     # Upgrade pip first using python -m pip (more reliable on Windows)
     run_command([str(python_exe), "-m", "pip", "install", "--upgrade", "pip"], "Upgrading pip", check=False)
-    
+
     # Install wheel for better package building
     run_command([str(pip_exe), "install", "wheel"], "Installing wheel")
-    
-    # Install requirements
+
+    # Detect GPU and determine CUDA version
+    cuda_version, gpu_name = detect_gpu()
+
+    # Install PyTorch first with correct CUDA support
+    print(f"\n🔥 Installing PyTorch for {gpu_name}...")
+
+    if cuda_version == "cu128":
+        # RTX 5090/5080 - Blackwell architecture requires CUDA 12.8
+        pytorch_cmd = [
+            str(pip_exe), "install",
+            "torch==2.9.0+cu128",
+            "torchvision==0.24.0+cu128",
+            "--index-url", "https://download.pytorch.org/whl/cu128"
+        ]
+        print("   Installing PyTorch 2.9.0 with CUDA 12.8 (Blackwell support)")
+    elif cuda_version == "cu121":
+        # RTX 4090 and other modern GPUs
+        pytorch_cmd = [
+            str(pip_exe), "install",
+            "torch==2.9.0",
+            "torchvision==0.24.0",
+            "--index-url", "https://download.pytorch.org/whl/cu121"
+        ]
+        print("   Installing PyTorch 2.9.0 with CUDA 12.1")
+    else:
+        # CPU only
+        pytorch_cmd = [
+            str(pip_exe), "install",
+            "torch==2.9.0",
+            "torchvision==0.24.0",
+            "--index-url", "https://download.pytorch.org/whl/cpu"
+        ]
+        print("   Installing PyTorch 2.9.0 (CPU only)")
+
+    pytorch_result = run_command(pytorch_cmd, "Installing PyTorch", check=False)
+
+    if pytorch_result.returncode != 0:
+        print("\n⚠️  PyTorch installation failed. Trying fallback method...")
+        # Fallback: try without index-url
+        fallback_cmd = [str(pip_exe), "install", "torch>=2.9.0", "torchvision>=0.24.0"]
+        run_command(fallback_cmd, "Installing PyTorch (fallback)")
+
+    # Install requirements (this will skip torch/torchvision as they're already installed)
     if Path("requirements.txt").exists():
-        run_command([str(pip_exe), "install", "-r", "requirements.txt"], "Installing requirements")
+        print("\n📋 Installing remaining dependencies from requirements.txt...")
+        run_command([str(pip_exe), "install", "-r", "requirements.txt"], "Installing requirements", check=False)
     else:
         # Fallback to manual installation of core dependencies
+        print("\n⚠️  requirements.txt not found, using fallback dependencies...")
         dependencies = [
-            "torch>=2.9.0",                    # UPDATED: Specify minimum version
-            "torchvision>=0.24.0",            # UPDATED: Specify minimum version
             "accelerate==1.8.1",              # Keep current (newer than musubi-tuner 1.6.0)
             "transformers==4.54.1",           # UPDATED: From 4.44.0 to match musubi-tuner
             "diffusers[torch]==0.32.1",       # UPDATED: From 0.25.0 for WAN 2.2 support
@@ -133,11 +226,40 @@ def install_dependencies():
             "opencv-python>=4.10.0",          # ADDED: Version specification
             "toml==0.10.2",                   # ADDED: Required for compatibility
             "imagesize==1.4.1",               # ADDED: Required dependency
+            "av>=14.0.0",                     # WAN 2.2 video processing
+            "easydict>=1.13",                 # WAN 2.2 configuration
+            "ftfy>=6.3.0",                    # WAN 2.2 text preprocessing
+            "voluptuous>=0.15.0",             # Config validation
         ]
-        
+
         for dep in dependencies:
-            run_command([str(pip_exe), "install", dep], f"Installing {dep}")
-    
+            run_command([str(pip_exe), "install", dep], f"Installing {dep}", check=False)
+
+    # Verify PyTorch installation and GPU support
+    print("\n🔍 Verifying PyTorch installation...")
+    verify_cmd = [
+        str(python_exe), "-c",
+        "import torch; print(f'PyTorch: {torch.__version__}'); "
+        "print(f'CUDA available: {torch.cuda.is_available()}'); "
+        "print(f'GPU: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else \"CPU only\"}'); "
+        "print(f'Compute capability: {torch.cuda.get_device_capability(0) if torch.cuda.is_available() else \"N/A\"}')"
+    ]
+    verify_result = run_command(verify_cmd, "Checking PyTorch", check=False)
+
+    if verify_result.returncode == 0:
+        print("\n✅ PyTorch installation verified!")
+        # Check for RTX 5090 specific verification
+        if cuda_version == "cu128":
+            print("\n🎮 RTX 5090 Support:")
+            print("   ✅ PyTorch installed with CUDA 12.8")
+            print("   ✅ Blackwell architecture (sm_120) supported")
+            print("   💡 Make sure you have:")
+            print("      • NVIDIA Driver 570.86 or newer")
+            print("      • CUDA Toolkit 12.8 installed")
+    else:
+        print("\n⚠️  Could not verify PyTorch installation")
+        print("   The installation may still work, but GPU acceleration might not be available")
+
     # Install current package in development mode
     run_command([str(pip_exe), "install", "-e", "."], "Installing LoRA the Explorer in development mode")
 
