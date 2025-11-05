@@ -99,8 +99,8 @@ def install_dependencies():
     else:
         # Fallback to manual installation of core dependencies
         dependencies = [
-            "torch==2.7.1",
-            "torchvision==0.22.1", 
+            "torch==2.9.0",
+            "torchvision==0.24.0", 
             "accelerate==1.8.1",
             "transformers==4.44.0",
             "diffusers[torch]==0.25.0",

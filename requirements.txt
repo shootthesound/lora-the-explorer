@@ -1,5 +1,5 @@
-# Only dependencies NOT in sd-scripts requirements.txt
-gradio>=5.35.0
+# Only dependencies NOT in musubi-tuner requirements.txt
+gradio>=5.49.1
 gradio_client>=1.10.4
 torch
 torchvision
@@ -8,12 +8,12 @@ torchvision
 pyyaml
 tqdm
 
-# Critical dependencies that might not install from sd-scripts
+# Critical dependencies that might not install from musubi-tuner
 opencv-python
 toml==0.10.2
 imagesize==1.4.1
 
-# LoRA-specific dependencies not in sd-scripts
+# LoRA-specific dependencies not in musubi-tuner
 lycoris-lora==1.8.3
 omegaconf
 scipy

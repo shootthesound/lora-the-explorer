@@ -239,7 +239,7 @@ def analyze_lora(lora_path: str, sd_scripts_path: Optional[str] = None) -> dict:
     alpha = metadata.get('network_alpha', 32.0)
     
     # Calculate approximate parameter count
-    # This is a rough estimate for Flux LoRAs
+    # This is a rough estimate for WAN 2.2 LoRAs
     approx_params = rank * rank * 50  # Rough estimate
     
     analysis = {

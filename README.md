@@ -165,14 +165,17 @@ Use the LoRA MetaEditor for advanced metadata management:
 
 ## 📊 WAN 2.2 Layer Architecture
 
-LoRA the Explorer works with WAN 2.2's transformer architecture:
-- **Transformer Layers (0-39)**: 40 layers total
+LoRA the Explorer works with **WAN 2.2**'s transformer architecture:
+- **Transformer Layers (0-39)**: 40 layers total (5120 dimensions, 40 attention heads)
 - **Dual Architecture**: WAN 2.2 uses separate high-noise and low-noise models
   - Each LoRA file targets one model (high or low noise)
   - Process them separately in this tool
 - **Layer Functions**: Being discovered by the community (experimental)
 
 **Note**: WAN 2.2 layer functions are still being researched. Experimentation is encouraged!
+
+### About WAN 2.5
+⚠️ **Important**: WAN 2.5 (released September 2025) is the newer version with audio generation and improved features. However, **this tool currently supports WAN 2.2 only**, as musubi-tuner does not yet support WAN 2.5 LoRA operations. We will update to WAN 2.5 when the backend tooling becomes available.
 
 ## 💡 Tips & Best Practices
 

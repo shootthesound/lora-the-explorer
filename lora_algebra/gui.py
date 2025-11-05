@@ -1092,8 +1092,8 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
                 
                 if not output:
                     return "❌ Please specify an output path"
-                
-                # Check if concat mode should be automatically enabled and fix FLUX metadata
+
+                # Check if concat mode should be automatically enabled and fix WAN 2.2 metadata
                 auto_concat_enabled = False
                 metadata_fixes_applied = []
                 temp_files_to_cleanup = []

@@ -128,7 +128,8 @@ class LoRAProcessor:
         Returns:
             Tuple of (success: bool, output: str)
         """
-        script_path = os.path.join(self.sd_scripts_path, "networks", script_name)
+        # musubi-tuner has scripts at root level, not in networks/
+        script_path = os.path.join(self.sd_scripts_path, script_name)
         
         if not os.path.exists(script_path):
             return False, f"Script not found: {script_path}"

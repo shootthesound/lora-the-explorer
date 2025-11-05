@@ -70,8 +70,8 @@ def predict_compatibility(lora_a_path: str, lora_b_path: str) -> Dict[str, Any]:
     base_b = metadata_b.get('base_model', '').lower()
     
     if base_a and base_b and base_a != base_b:
-        if 'flux' in base_a and 'flux' in base_b:
-            # Both are Flux models, probably compatible
+        if 'wan' in base_a and 'wan' in base_b:
+            # Both are WAN models, probably compatible
             pass
         elif 'sd' in base_a and 'sd' in base_b:
             # Both are SD models, check version compatibility
