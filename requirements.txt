@@ -1,15 +1,15 @@
 # Only dependencies NOT in musubi-tuner requirements.txt
 gradio>=5.49.1
 gradio_client>=1.10.4
-torch
-torchvision
+torch>=2.9.0
+torchvision>=0.24.0
 
 # GUI-specific dependencies
 pyyaml
 tqdm
 
 # Critical dependencies that might not install from musubi-tuner
-opencv-python
+opencv-python>=4.10.0
 toml==0.10.2
 imagesize==1.4.1
 
@@ -19,7 +19,10 @@ omegaconf
 scipy
 k-diffusion==0.0.16
 peft==0.16.0
-# Pin accelerate to prevent dependency resolution conflicts
+
+# Pin accelerate - we use newer version than musubi-tuner but test compatibility
+# musubi-tuner uses 1.6.0, we use 1.8.1 for newer features
+# If issues occur, downgrade to 1.6.0
 accelerate==1.8.1
 
 # WAN 2.2 specific dependencies (musubi-tuner may not include these)
@@ -27,3 +30,11 @@ av>=14.0.0           # Video processing for WAN 2.2
 easydict>=1.13       # WAN 2.2 configuration
 ftfy>=6.3.0          # Text preprocessing for WAN 2.2
 voluptuous>=0.15.0   # Config validation
+
+# UPDATED: Match musubi-tuner versions for compatibility
+diffusers==0.32.1        # Updated from 0.25.0 for WAN 2.2 support
+transformers==4.54.1     # Updated from 4.44.0 for musubi-tuner compatibility
+huggingface-hub>=0.34.3  # Updated from 0.24.5 for API compatibility
+safetensors>=0.4.5       # Updated from 0.4.4
+einops>=0.8.1            # Updated from 0.7.0 for PyTorch 2.9.0 compatibility
+sentencepiece>=0.2.1     # Updated from 0.2.0

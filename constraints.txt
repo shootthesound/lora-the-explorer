@@ -1,3 +1,17 @@
-# Version constraints for sd-scripts dependencies
-# These override versions specified in sd-scripts/requirements.txt
+# Version constraints for musubi-tuner dependencies
+# These override versions specified in musubi-tuner/requirements.txt
+
+# We use newer accelerate than musubi-tuner (1.6.0) for improved features
+# Tested compatible with PyTorch 2.9.0 and our use case
+# If issues occur with musubi-tuner, downgrade to: accelerate==1.6.0
 accelerate==1.8.1
+
+# Match musubi-tuner versions for core ML libraries
+diffusers==0.32.1
+transformers==4.54.1
+huggingface-hub>=0.34.3
+
+# Use newer versions for PyTorch 2.9.0 compatibility
+einops>=0.8.1
+safetensors>=0.4.5
+sentencepiece>=0.2.1

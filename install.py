@@ -34,12 +34,28 @@ def run_command(command, description, check=True):
 def check_python_version():
     """Check if Python version is compatible"""
     version = sys.version_info
-    if version.major < 3 or (version.major == 3 and version.minor < 8):
-        print(" Python 3.8 or higher is required")
+
+    # UPDATED: Require Python 3.10+ for PyTorch 2.9.0, Gradio 5.49.1, and musubi-tuner
+    if version.major < 3 or (version.major == 3 and version.minor < 10):
+        print("❌ Python 3.10 or higher is required")
         print(f"   Current version: {version.major}.{version.minor}.{version.micro}")
+        print("\n   Why Python 3.10+?")
+        print("   • PyTorch 2.9.0 requires Python 3.10+")
+        print("   • Gradio 5.49.1 requires Python 3.10+")
+        print("   • musubi-tuner (WAN 2.2 support) requires Python 3.10-3.12")
+        print("\n   Note: Python 3.14 is not yet supported due to Pydantic compatibility issues")
+        print("   Recommended: Python 3.10, 3.11, or 3.12")
         sys.exit(1)
-    
-    print(f" Python {version.major}.{version.minor}.{version.micro} - Compatible")
+
+    # Warn about Python 3.13+ (may have issues)
+    if version.major == 3 and version.minor >= 13:
+        print(f"⚠️  Python {version.major}.{version.minor}.{version.micro} detected")
+        print("   Warning: Python 3.13+ may have compatibility issues with Gradio/Pydantic")
+        print("   Python 3.12 is recommended for best compatibility")
+        print("   Continuing anyway...")
+    else:
+        print(f"✅ Python {version.major}.{version.minor}.{version.micro} - Compatible")
+
     return True
 
 def create_virtual_environment():
@@ -99,21 +115,24 @@ def install_dependencies():
     else:
         # Fallback to manual installation of core dependencies
         dependencies = [
-            "torch==2.9.0",
-            "torchvision==0.24.0", 
-            "accelerate==1.8.1",
-            "transformers==4.44.0",
-            "diffusers[torch]==0.25.0",
-            "safetensors==0.4.4",
-            "sentencepiece==0.2.0",
-            "gradio>=4.0.0",
-            "einops==0.7.0",
-            "huggingface-hub==0.24.5",
-            "rich==13.7.0",
+            "torch>=2.9.0",                    # UPDATED: Specify minimum version
+            "torchvision>=0.24.0",            # UPDATED: Specify minimum version
+            "accelerate==1.8.1",              # Keep current (newer than musubi-tuner 1.6.0)
+            "transformers==4.54.1",           # UPDATED: From 4.44.0 to match musubi-tuner
+            "diffusers[torch]==0.32.1",       # UPDATED: From 0.25.0 for WAN 2.2 support
+            "safetensors>=0.4.5",             # UPDATED: From 0.4.4
+            "sentencepiece>=0.2.1",           # UPDATED: From 0.2.0
+            "gradio>=5.49.1",                 # UPDATED: From >=4.0.0 to match requirements.txt
+            "einops>=0.8.1",                  # UPDATED: From 0.7.0 for PyTorch 2.9.0 compat
+            "huggingface-hub>=0.34.3",        # UPDATED: From 0.24.5 for API compatibility
+            "rich>=14.2.0",                   # UPDATED: From 13.7.0
             "numpy>=1.24.0",
             "pyyaml>=6.0.0",
-            "pillow>=10.0.0",
-            "tqdm>=4.66.0"
+            "pillow>=11.3.0",                 # UPDATED: From >=10.0.0 to match musubi-tuner
+            "tqdm>=4.66.0",
+            "opencv-python>=4.10.0",          # ADDED: Version specification
+            "toml==0.10.2",                   # ADDED: Required for compatibility
+            "imagesize==1.4.1",               # ADDED: Required dependency
         ]
         
         for dep in dependencies:

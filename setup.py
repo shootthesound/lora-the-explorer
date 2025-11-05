@@ -15,7 +15,7 @@ setup(
     version="1.0.0",
     author="LoRA the Explorer",
     author_email="pneill@gmail.com",
-    description="Advanced FLUX LoRA manipulation toolkit with GUI interface for layer targeting, difference operations, and compatibility fixes",
+    description="Advanced WAN 2.2 LoRA manipulation toolkit with GUI interface for layer targeting, difference operations, and compatibility fixes",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/shootthesound/lora-the-explorer",
@@ -27,8 +27,6 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
@@ -39,7 +37,7 @@ setup(
         "Environment :: Win32 (MS Windows)",
         "Environment :: MacOS X",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.10",
     install_requires=requirements,
     extras_require={
         "dev": [
