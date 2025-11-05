@@ -35,12 +35,12 @@ def check_python_version():
     """Check if Python version is compatible"""
     version = sys.version_info
 
-    # UPDATED: Require Python 3.10+ for PyTorch 2.9.0, Gradio 5.49.1, and musubi-tuner
+    # UPDATED: Require Python 3.10+ for PyTorch 2.7.1+, Gradio 5.49.1, and musubi-tuner
     if version.major < 3 or (version.major == 3 and version.minor < 10):
         print("❌ Python 3.10 or higher is required")
         print(f"   Current version: {version.major}.{version.minor}.{version.micro}")
         print("\n   Why Python 3.10+?")
-        print("   • PyTorch 2.9.0 requires Python 3.10+")
+        print("   • PyTorch 2.7.1+ requires Python 3.10+")
         print("   • Gradio 5.49.1 requires Python 3.10+")
         print("   • musubi-tuner (WAN 2.2 support) requires Python 3.10-3.12")
         print("\n   Note: Python 3.14 is not yet supported due to Pydantic compatibility issues")
@@ -100,7 +100,7 @@ def ask_gpu_type():
     print("Which GPU/hardware do you have?")
     print()
     print("1. RTX 5090/5080 (Blackwell - requires CUDA 12.8)")
-    print("2. RTX 4090/4080 or other modern NVIDIA GPU (CUDA 12.1)")
+    print("2. RTX 4090/4080 or other modern NVIDIA GPU (CUDA 12.4)")
     print("3. CPU only (no GPU / AMD / Intel)")
     print()
 
@@ -114,8 +114,8 @@ def ask_gpu_type():
             return "cu128", "RTX 5090/5080"
         elif choice == "2":
             print("\n✅ Selected: Modern NVIDIA GPU")
-            print("   📦 Will install PyTorch with CUDA 12.1 support")
-            return "cu121", "NVIDIA GPU"
+            print("   📦 Will install PyTorch with CUDA 12.4 support")
+            return "cu124", "NVIDIA GPU"
         elif choice == "3":
             print("\n✅ Selected: CPU only")
             print("   📦 Will install CPU-optimized PyTorch")
@@ -145,42 +145,42 @@ def install_dependencies():
     cuda_version, gpu_name = ask_gpu_type()
 
     # Install PyTorch first with correct CUDA support
-    print(f"\n🔥 Installing PyTorch 2.9.0 for {gpu_name}...")
+    print(f"\n🔥 Installing PyTorch for {gpu_name}...")
 
     if cuda_version == "cu128":
         # RTX 5090/5080 - Blackwell architecture requires CUDA 12.8
         pytorch_cmd = [
             str(pip_exe), "install",
-            "torch==2.9.0+cu128",
-            "torchvision==0.24.0+cu128",
+            "torch==2.8.0+cu128",
+            "torchvision==0.23.0+cu128",
             "--index-url", "https://download.pytorch.org/whl/cu128"
         ]
-        print("   Installing PyTorch 2.9.0 with CUDA 12.8 (Blackwell support)")
-    elif cuda_version == "cu121":
-        # RTX 4090 and other modern GPUs
+        print("   Installing PyTorch 2.8.0 with CUDA 12.8 (Blackwell support)")
+    elif cuda_version == "cu124":
+        # RTX 4090 and other modern GPUs - use musubi-tuner compatible version
         pytorch_cmd = [
             str(pip_exe), "install",
-            "torch==2.9.0",
-            "torchvision==0.24.0",
-            "--index-url", "https://download.pytorch.org/whl/cu121"
+            "torch==2.7.1+cu124",
+            "torchvision==0.22.1+cu124",
+            "--index-url", "https://download.pytorch.org/whl/cu124"
         ]
-        print("   Installing PyTorch 2.9.0 with CUDA 12.1")
+        print("   Installing PyTorch 2.7.1 with CUDA 12.4 (musubi-tuner compatible)")
     else:
         # CPU only
         pytorch_cmd = [
             str(pip_exe), "install",
-            "torch==2.9.0",
-            "torchvision==0.24.0",
+            "torch==2.8.0",
+            "torchvision==0.23.0",
             "--index-url", "https://download.pytorch.org/whl/cpu"
         ]
-        print("   Installing PyTorch 2.9.0 (CPU only)")
+        print("   Installing PyTorch 2.8.0 (CPU only)")
 
     pytorch_result = run_command(pytorch_cmd, "Installing PyTorch", check=False)
 
     if pytorch_result.returncode != 0:
         print("\n⚠️  PyTorch installation failed. Trying fallback method...")
-        # Fallback: try without index-url
-        fallback_cmd = [str(pip_exe), "install", "torch>=2.9.0", "torchvision>=0.24.0"]
+        # Fallback: try without index-url (will install latest stable)
+        fallback_cmd = [str(pip_exe), "install", "torch>=2.7.1", "torchvision>=0.22.1"]
         run_command(fallback_cmd, "Installing PyTorch (fallback)")
 
     # Install requirements (this will skip torch/torchvision as they're already installed)
@@ -191,13 +191,13 @@ def install_dependencies():
         # Fallback to manual installation of core dependencies
         print("\n⚠️  requirements.txt not found, using fallback dependencies...")
         dependencies = [
-            "accelerate==1.8.1",              # Keep current (newer than musubi-tuner 1.6.0)
+            "accelerate==1.6.0",              # Match musubi-tuner for compatibility
             "transformers==4.54.1",           # UPDATED: From 4.44.0 to match musubi-tuner
             "diffusers[torch]==0.32.1",       # UPDATED: From 0.25.0 for WAN 2.2 support
             "safetensors>=0.4.5",             # UPDATED: From 0.4.4
             "sentencepiece>=0.2.1",           # UPDATED: From 0.2.0
             "gradio>=5.49.1",                 # UPDATED: From >=4.0.0 to match requirements.txt
-            "einops>=0.8.1",                  # UPDATED: From 0.7.0 for PyTorch 2.9.0 compat
+            "einops==0.7.0",                  # Match musubi-tuner exactly for compatibility
             "huggingface-hub>=0.34.3",        # UPDATED: From 0.24.5 for API compatibility
             "rich>=14.2.0",                   # UPDATED: From 13.7.0
             "numpy>=1.24.0",

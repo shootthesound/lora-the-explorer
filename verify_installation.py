@@ -138,9 +138,9 @@ def check_pytorch_version():
 
         # Check if version is adequate for WAN 2.2
         major, minor = map(int, version.split('.')[:2])
-        if major < 2 or (major == 2 and minor < 9):
-            warnings.append(f"PyTorch {version} may not support WAN 2.2 optimally (recommend 2.9.0+)")
-            print(f"   ⚠️  Version may be outdated for WAN 2.2 (recommend 2.9.0+)")
+        if major < 2 or (major == 2 and minor < 7):
+            warnings.append(f"PyTorch {version} may not support WAN 2.2 optimally (recommend 2.7.1+)")
+            print(f"   ⚠️  Version may be outdated for WAN 2.2 (recommend 2.7.1+)")
 
         # Check CUDA availability
         if torch.cuda.is_available():

@@ -1,21 +1,21 @@
 # LoRA the Explorer - WAN 2.2 Dependencies
 #
 # IMPORTANT FOR RTX 5090 USERS:
-# The installer (install.py) will automatically detect your GPU and install
+# The installer (install.py) will prompt you to select your GPU and install
 # the correct PyTorch build. If installing manually:
 #
 # For RTX 5090/5080 (Blackwell - sm_120):
-#   pip install torch==2.9.0+cu128 torchvision==0.24.0+cu128 --index-url https://download.pytorch.org/whl/cu128
+#   pip install torch==2.8.0+cu128 torchvision==0.23.0+cu128 --index-url https://download.pytorch.org/whl/cu128
 #
-# For RTX 4090/4080 and modern GPUs:
-#   pip install torch==2.9.0 torchvision==0.24.0 --index-url https://download.pytorch.org/whl/cu121
+# For RTX 4090/4080 and modern GPUs (CUDA 12.4):
+#   pip install torch==2.7.1+cu124 torchvision==0.22.1+cu124 --index-url https://download.pytorch.org/whl/cu124
 #
 # For CPU only:
-#   pip install torch==2.9.0 torchvision==0.24.0 --index-url https://download.pytorch.org/whl/cpu
+#   pip install torch==2.8.0 torchvision==0.23.0 --index-url https://download.pytorch.org/whl/cpu
 
 # PyTorch (installed separately by install.py with correct CUDA version)
-# torch>=2.9.0  # Installed by installer with GPU detection
-# torchvision>=0.24.0  # Installed by installer with GPU detection
+# torch>=2.7.1  # Installed by installer with GPU detection
+# torchvision>=0.22.1  # Installed by installer with GPU detection
 
 # GUI Framework
 gradio>=5.49.1
@@ -37,10 +37,8 @@ scipy
 k-diffusion==0.0.16
 peft==0.16.0
 
-# Pin accelerate - we use newer version than musubi-tuner but test compatibility
-# musubi-tuner uses 1.6.0, we use 1.8.1 for newer features
-# If issues occur, downgrade to 1.6.0
-accelerate==1.8.1
+# Pin accelerate to match musubi-tuner for guaranteed compatibility
+accelerate==1.6.0
 
 # WAN 2.2 specific dependencies
 av>=14.0.0           # Video processing for WAN 2.2
@@ -53,5 +51,5 @@ diffusers==0.32.1        # Updated from 0.25.0 for WAN 2.2 support
 transformers==4.54.1     # Updated from 4.44.0 for musubi-tuner compatibility
 huggingface-hub>=0.34.3  # Updated from 0.24.5 for API compatibility
 safetensors>=0.4.5       # Updated from 0.4.4
-einops>=0.8.1            # Updated from 0.7.0 for PyTorch 2.9.0 compatibility
+einops==0.7.0            # Match musubi-tuner exactly for compatibility
 sentencepiece>=0.2.1     # Updated from 0.2.0
