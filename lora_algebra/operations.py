@@ -12,24 +12,24 @@ import torch
 
 
 class LoRAProcessor:
-    """Helper class for LoRA operations using sd-scripts"""
-    
+    """Helper class for LoRA operations using musubi-tuner"""
+
     def __init__(self, sd_scripts_path: Optional[str] = None):
-        self.sd_scripts_path = sd_scripts_path or resolve_path_without_quotes("../sd-scripts")
+        self.sd_scripts_path = sd_scripts_path or resolve_path_without_quotes("../musubi-tuner")
     
     def _run_sd_script(self, script_name: str, args: List[str]) -> Tuple[bool, str]:
-        """Run an sd-scripts script with given arguments"""
+        """Run a musubi-tuner script with given arguments"""
         script_path = os.path.join(self.sd_scripts_path, "networks", script_name)
-        
+
         if not os.path.exists(script_path):
             return False, f"Script not found: {script_path}"
-        
+
         command = [sys.executable, script_path] + args
-        
+
         try:
             project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            
-            # Set up environment with sd-scripts in Python path
+
+            # Set up environment with musubi-tuner in Python path
             env = os.environ.copy()
             if 'PYTHONPATH' in env:
                 env['PYTHONPATH'] = f"{self.sd_scripts_path}{os.pathsep}{env['PYTHONPATH']}"
@@ -49,9 +49,9 @@ class LoRAProcessor:
             else:
                 error_msg = result.stderr or result.stdout
                 if "ModuleNotFoundError: No module named 'library'" in error_msg:
-                    error_msg += f"\n\nTroubleshooting: sd-scripts library not found. Try:\n"
-                    error_msg += f"1. Ensure sd-scripts is properly installed\n"
-                    error_msg += f"2. Check that sd-scripts path is correct: {self.sd_scripts_path}\n"
+                    error_msg += f"\n\nTroubleshooting: musubi-tuner library not found. Try:\n"
+                    error_msg += f"1. Ensure musubi-tuner is properly installed\n"
+                    error_msg += f"2. Check that musubi-tuner path is correct: {self.sd_scripts_path}\n"
                     error_msg += f"3. Reinstall by running the installer again"
                 return False, error_msg
                 
@@ -76,34 +76,34 @@ def resolve_path_without_quotes(p):
     return norm_path
 
 def subtract_loras(
-    lora_a_path: str, 
-    lora_b_path: str, 
+    lora_a_path: str,
+    lora_b_path: str,
     output_path: str,
     strength_a: float = 1.0,
     strength_b: float = 1.0,
     use_concat: bool = True,
     sd_scripts_path: Optional[str] = None
 ) -> Tuple[bool, str]:
-    """Extract difference between two LoRAs (A - B) using negative weights - copied from custom.py"""
-    
+    """Extract difference between two WAN 2.2 LoRAs (A - B) using negative weights"""
+
     # Validate inputs
     if not lora_a_path or not lora_b_path:
         return False, "Error: Please provide paths for both LoRAs"
-    
+
     if not os.path.exists(lora_a_path):
         return False, f"Error: LoRA A file not found: {lora_a_path}"
-    
+
     if not os.path.exists(lora_b_path):
         return False, f"Error: LoRA B file not found: {lora_b_path}"
-    
+
     if not output_path:
         return False, "Error: Please provide an output path"
-    
+
     # Create output directory
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    
-    # Build command for LoRA difference extraction using negative weight - EXACT copy from custom.py
-    script_path = resolve_path_without_quotes("../sd-scripts/networks/flux_merge_lora.py")
+
+    # Build command for LoRA difference extraction using negative weight
+    script_path = resolve_path_without_quotes("../musubi-tuner/networks/merge_lora.py")
     
     # Use positive weight for A and negative weight for B to get A - B
     command = [
@@ -122,14 +122,14 @@ def subtract_loras(
     try:
         # Run the difference extraction command - but use project root as working directory
         project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        
-        # Set up environment with sd-scripts in Python path
-        sd_scripts_dir = sd_scripts_path or resolve_path_without_quotes("../sd-scripts")
+
+        # Set up environment with musubi-tuner in Python path
+        musubi_dir = sd_scripts_path or resolve_path_without_quotes("../musubi-tuner")
         env = os.environ.copy()
         if 'PYTHONPATH' in env:
-            env['PYTHONPATH'] = f"{sd_scripts_dir}{os.pathsep}{env['PYTHONPATH']}"
+            env['PYTHONPATH'] = f"{musubi_dir}{os.pathsep}{env['PYTHONPATH']}"
         else:
-            env['PYTHONPATH'] = sd_scripts_dir
+            env['PYTHONPATH'] = musubi_dir
         
         result = subprocess.run(
             command,
@@ -144,9 +144,9 @@ def subtract_loras(
         else:
             error_msg = result.stderr or result.stdout
             if "ModuleNotFoundError: No module named 'library'" in error_msg:
-                error_msg += f"\n\nTroubleshooting: sd-scripts library not found. Try:\n"
-                error_msg += f"1. Ensure sd-scripts is properly installed\n"
-                error_msg += f"2. Check that sd-scripts path is correct: {sd_scripts_dir}\n"
+                error_msg += f"\n\nTroubleshooting: musubi-tuner library not found. Try:\n"
+                error_msg += f"1. Ensure musubi-tuner is properly installed\n"
+                error_msg += f"2. Check that musubi-tuner path is correct: {musubi_dir}\n"
                 error_msg += f"3. Reinstall by running the installer again"
             return False, f"Error during difference extraction:\n{error_msg}"
             
@@ -201,7 +201,7 @@ def merge_loras(
         args.append("--concat")
     
     # Run the merge
-    success, output = processor._run_sd_script("flux_merge_lora.py", args)
+    success, output = processor._run_sd_script("merge_lora.py", args)
     
     if success and os.path.exists(output_path):
         return True, f"Success! Merged LoRA saved to: {output_path}\\n\\nCombined: A (strength {strength_a}) + B (strength {strength_b})"
@@ -262,14 +262,14 @@ def target_lora_layers(
     mute_layers: List[int],
     sd_scripts_path: Optional[str] = None
 ) -> Tuple[bool, str]:
-    """Mute specific FLUX layers in a LoRA by setting their weights to zero
-    
+    """Mute specific WAN 2.2 transformer layers in a LoRA by setting their weights to zero
+
     Args:
         lora_path: Path to input LoRA file
         output_path: Path for output LoRA file
         mute_layers: List of layer numbers to mute (e.g., [7, 20])
         sd_scripts_path: Not used but kept for consistency
-        
+
     Returns:
         Tuple of (success: bool, message: str)
     """
@@ -321,22 +321,18 @@ def target_lora_layers(
                 count = len([k for k in all_keys if k.startswith(prefix)])
                 print(f"   {prefix}: {count} tensors")
             
-            # Analyze layer distribution with FLUX-specific patterns
+            # Analyze layer distribution with WAN 2.2-specific patterns
             for key in all_keys:
-                for layer_num in range(50):  # Check layers 0-49
-                    # FLUX LoRA naming patterns
+                for layer_num in range(50):  # Check layers 0-49 (WAN 2.2 has 40 transformer layers)
+                    # WAN 2.2 LoRA naming patterns (transformer-based)
                     patterns = [
-                        f"_layers_{layer_num}_",  # lora_te1_text_model_encoder_layers_7_
-                        f"_blocks_{layer_num}_",  # lora_unet_double_blocks_7_, lora_unet_single_blocks_7_
-                        f"single_blocks_{layer_num}_",  # lora_unet_single_blocks_7_
-                        f"double_blocks_{layer_num}_",  # lora_unet_double_blocks_7_
-                        # Legacy patterns for compatibility
-                        f"single_transformer_blocks.{layer_num}.",
-                        f"transformer.single_transformer_blocks.{layer_num}.",
-                        f"transformer_blocks.{layer_num}.",
-                        f"blocks.{layer_num}.",
-                        f"layer.{layer_num}.",
-                        f"layers.{layer_num}."
+                        f"_layers_{layer_num}_",  # Generic layer pattern
+                        f"_blocks_{layer_num}_",  # Generic block pattern
+                        f"transformer_blocks.{layer_num}.",  # Transformer blocks
+                        f"blocks.{layer_num}.",  # Simple blocks
+                        f"layer.{layer_num}.",  # Simple layer
+                        f"layers.{layer_num}.",  # Simple layers
+                        f".{layer_num}.",  # Numbered components
                     ]
                     
                     found_match = False
@@ -365,21 +361,18 @@ def target_lora_layers(
                 # Check if this tensor belongs to a layer we want to mute
                 should_mute = False
                 matched_layer = None
-                
+
+
                 for layer_num in mute_layers:
-                    # Use FLUX LoRA naming patterns (same as analysis)
+                    # Use WAN 2.2 LoRA naming patterns (same as analysis)
                     layer_patterns = [
-                        f"_layers_{layer_num}_",  # lora_te1_text_model_encoder_layers_7_
-                        f"_blocks_{layer_num}_",  # lora_unet_double_blocks_7_, lora_unet_single_blocks_7_
-                        f"single_blocks_{layer_num}_",  # lora_unet_single_blocks_7_
-                        f"double_blocks_{layer_num}_",  # lora_unet_double_blocks_7_
-                        # Legacy patterns for compatibility
-                        f"single_transformer_blocks.{layer_num}.",
-                        f"transformer.single_transformer_blocks.{layer_num}.",
-                        f"transformer_blocks.{layer_num}.",
-                        f"blocks.{layer_num}.",
-                        f"layer.{layer_num}.",
-                        f"layers.{layer_num}."
+                        f"_layers_{layer_num}_",  # Generic layer pattern
+                        f"_blocks_{layer_num}_",  # Generic block pattern
+                        f"transformer_blocks.{layer_num}.",  # Transformer blocks
+                        f"blocks.{layer_num}.",  # Simple blocks
+                        f"layer.{layer_num}.",  # Simple layer
+                        f"layers.{layer_num}.",  # Simple layers
+                        f".{layer_num}.",  # Numbered components
                     ]
                     
                     if any(pattern in key for pattern in layer_patterns):
@@ -503,12 +496,15 @@ def selective_layer_merge(
                 # Check if this tensor belongs to a layer we want from A
                 should_include = False
                 for layer_num in layers_from_a:
-                    # Use same layer patterns as targeting
+                    # Use same layer patterns as targeting (WAN 2.2)
                     layer_patterns = [
-                        f"_layers_{layer_num}_",  # lora_te1_text_model_encoder_layers_7_
-                        f"_blocks_{layer_num}_",  # lora_unet_double_blocks_7_, lora_unet_single_blocks_7_
-                        f"single_blocks_{layer_num}_",  # lora_unet_single_blocks_7_
-                        f"double_blocks_{layer_num}_",  # lora_unet_double_blocks_7_
+                        f"_layers_{layer_num}_",  # Generic layer pattern
+                        f"_blocks_{layer_num}_",  # Generic block pattern
+                        f"transformer_blocks.{layer_num}.",  # Transformer blocks
+                        f"blocks.{layer_num}.",  # Simple blocks
+                        f"layer.{layer_num}.",  # Simple layer
+                        f"layers.{layer_num}.",  # Simple layers
+                        f".{layer_num}.",  # Numbered components
                     ]
                     
                     if any(pattern in key for pattern in layer_patterns):
@@ -533,12 +529,15 @@ def selective_layer_merge(
                 # Check if this tensor belongs to a layer we want from B
                 should_include = False
                 for layer_num in layers_from_b:
-                    # Use same layer patterns as targeting
+                    # Use same layer patterns as targeting (WAN 2.2)
                     layer_patterns = [
-                        f"_layers_{layer_num}_",  # lora_te1_text_model_encoder_layers_7_
-                        f"_blocks_{layer_num}_",  # lora_unet_double_blocks_7_, lora_unet_single_blocks_7_
-                        f"single_blocks_{layer_num}_",  # lora_unet_single_blocks_7_
-                        f"double_blocks_{layer_num}_",  # lora_unet_double_blocks_7_
+                        f"_layers_{layer_num}_",  # Generic layer pattern
+                        f"_blocks_{layer_num}_",  # Generic block pattern
+                        f"transformer_blocks.{layer_num}.",  # Transformer blocks
+                        f"blocks.{layer_num}.",  # Simple blocks
+                        f"layer.{layer_num}.",  # Simple layer
+                        f"layers.{layer_num}.",  # Simple layers
+                        f".{layer_num}.",  # Numbered components
                     ]
                     
                     if any(pattern in key for pattern in layer_patterns):
@@ -626,9 +625,7 @@ def deep_layer_analysis(
         
         # Initialize analysis structures
         layer_stats = {}
-        te_layers = {}      # Text Encoder layers 0-11
-        double_layers = {}  # Double Block layers 0-19
-        single_layers = {}  # Single Block layers 0-37
+        transformer_layers = {}  # WAN 2.2 transformer layers 0-39
         
         all_tensors = []
         total_tensors = 0
@@ -655,45 +652,24 @@ def deep_layer_analysis(
                     'shape': list(tensor.shape)
                 }
                 
-                # Classify by layer type and number
+                # Classify by layer number (WAN 2.2 has 40 transformer layers)
                 layer_num = None
-                layer_type = None
-                
-                # Text Encoder layers
-                if 'te1_text_model_encoder_layers_' in key:
-                    import re
-                    match = re.search(r'layers_(\d+)_', key)
+
+                # Try to extract layer number from key using various patterns
+                import re
+                # Try patterns like .0., .1., etc. or _0_, _1_, etc.
+                for pattern in [r'[\._](\d+)[\._]', r'blocks[_\.](\d+)', r'layers[_\.](\d+)', r'layer[_\.](\d+)']:
+                    match = re.search(pattern, key)
                     if match:
-                        layer_num = int(match.group(1))
-                        layer_type = 'te'
-                        if layer_num not in te_layers:
-                            te_layers[layer_num] = {'tensors': [], 'stats': []}
-                        te_layers[layer_num]['tensors'].append(key)
-                        te_layers[layer_num]['stats'].append(tensor_stats)
-                
-                # UNet Double Block layers
-                elif 'unet_double_blocks_' in key:
-                    import re
-                    match = re.search(r'blocks_(\d+)_', key)
-                    if match:
-                        layer_num = int(match.group(1))
-                        layer_type = 'double'
-                        if layer_num not in double_layers:
-                            double_layers[layer_num] = {'tensors': [], 'stats': []}
-                        double_layers[layer_num]['tensors'].append(key)
-                        double_layers[layer_num]['stats'].append(tensor_stats)
-                
-                # UNet Single Block layers
-                elif 'unet_single_blocks_' in key:
-                    import re
-                    match = re.search(r'blocks_(\d+)_', key)
-                    if match:
-                        layer_num = int(match.group(1))
-                        layer_type = 'single'
-                        if layer_num not in single_layers:
-                            single_layers[layer_num] = {'tensors': [], 'stats': []}
-                        single_layers[layer_num]['tensors'].append(key)
-                        single_layers[layer_num]['stats'].append(tensor_stats)
+                        potential_layer = int(match.group(1))
+                        # WAN 2.2 has 40 transformer layers (0-39)
+                        if 0 <= potential_layer < 50:  # Allow up to 50 for safety
+                            layer_num = potential_layer
+                            if layer_num not in transformer_layers:
+                                transformer_layers[layer_num] = {'tensors': [], 'stats': []}
+                            transformer_layers[layer_num]['tensors'].append(key)
+                            transformer_layers[layer_num]['stats'].append(tensor_stats)
+                            break
         
         # Aggregate layer statistics
         def aggregate_layer_stats(layer_dict):
@@ -711,38 +687,32 @@ def deep_layer_analysis(
                     }
             return aggregated
         
-        te_aggregated = aggregate_layer_stats(te_layers)
-        double_aggregated = aggregate_layer_stats(double_layers)
-        single_aggregated = aggregate_layer_stats(single_layers)
-        
-        # Detect patterns and anomalies
-        known_facial_layers = [7, 12, 16, 20]
-        
-        # Find layers with unusually high magnitude (potential overtraining)
+        transformer_aggregated = aggregate_layer_stats(transformer_layers)
+
+        # Detect patterns and anomalies (WAN 2.2 specific)
+        # Note: Layer functions in WAN 2.2 are still being discovered by the community
         suspicious_layers = []
-        
-        # Check for facial data in non-facial layers
-        if single_aggregated:
-            # Calculate baseline from known facial layers
-            facial_magnitudes = [single_aggregated.get(layer, {}).get('avg_magnitude', 0) 
-                               for layer in known_facial_layers if layer in single_aggregated]
-            
-            if facial_magnitudes:
-                facial_baseline = np.mean(facial_magnitudes)
-                facial_std = np.std(facial_magnitudes) if len(facial_magnitudes) > 1 else facial_baseline * 0.3
-                
-                # Check all layers for suspicious activity
-                for layer_num, stats in single_aggregated.items():
-                    if layer_num not in known_facial_layers:
-                        if stats['avg_magnitude'] > facial_baseline * 0.7:  # 70% of facial layer magnitude
-                            confidence = min(100, (stats['avg_magnitude'] / facial_baseline) * 100)
-                            suspicious_layers.append({
-                                'layer': layer_num,
-                                'type': 'single',
-                                'magnitude': stats['avg_magnitude'],
-                                'confidence': confidence,
-                                'reason': 'High magnitude suggesting facial data'
-                            })
+
+        # Calculate overall average magnitude to detect outliers
+        if transformer_aggregated:
+            all_magnitudes = [stats['avg_magnitude'] for stats in transformer_aggregated.values()]
+
+            if all_magnitudes:
+                overall_avg = np.mean(all_magnitudes)
+                overall_std = np.std(all_magnitudes) if len(all_magnitudes) > 1 else overall_avg * 0.3
+
+                # Find layers with unusually high magnitude (potential overtraining or special features)
+                for layer_num, stats in transformer_aggregated.items():
+                    # Flag layers that are significantly above average
+                    if stats['avg_magnitude'] > overall_avg + (2 * overall_std):
+                        confidence = min(100, ((stats['avg_magnitude'] - overall_avg) / overall_std) * 20)
+                        suspicious_layers.append({
+                            'layer': layer_num,
+                            'type': 'transformer',
+                            'magnitude': stats['avg_magnitude'],
+                            'confidence': confidence,
+                            'reason': 'Unusually high magnitude (potential concentrated features)'
+                        })
         
         # Generate analysis report
         analysis = {
@@ -753,19 +723,14 @@ def deep_layer_analysis(
                 'total_tensors': total_tensors
             },
             'layer_distribution': {
-                'text_encoder': len(te_aggregated),
-                'double_blocks': len(double_aggregated), 
-                'single_blocks': len(single_aggregated)
+                'transformer_layers': len(transformer_aggregated)
             },
             'layer_stats': {
-                'text_encoder': te_aggregated,
-                'double_blocks': double_aggregated,
-                'single_blocks': single_aggregated
+                'transformer_layers': transformer_aggregated
             },
             'pattern_analysis': {
-                'known_facial_layers': known_facial_layers,
                 'suspicious_layers': suspicious_layers,
-                'overtraining_detected': len(suspicious_layers) > 0
+                'concentration_detected': len(suspicious_layers) > 0
             },
             'user_goal': user_goal,
             'analysis_timestamp': str(torch.rand(1).item())  # Simple timestamp

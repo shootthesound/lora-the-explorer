@@ -1,10 +1,10 @@
-# LoRA the Explorer - advanced FLUX LoRA manipulation
+# LoRA the Explorer - advanced WAN 2.2 LoRA manipulation
 
 ![LoRA the Explorer Banner](https://img.shields.io/badge/LoRA-the%20Explorer-blue?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3.8+-green?style=for-the-badge&logo=python)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
-This tool provides various FLUX LoRA manipulation techniques including difference operations, merging, targeted layer merging between LoRAs, layer targeting for zeroing and analysis. It's designed to help you create compatible LoRAs and experiment with different combination approaches.
+This tool provides various WAN 2.2 LoRA manipulation techniques including difference operations, merging, targeted layer merging between LoRAs, layer targeting for zeroing and analysis. It's designed to help you create compatible LoRAs and experiment with different combination approaches for both image and video generation.
 
 ## What You Can Do:
 
@@ -17,7 +17,7 @@ This tool provides various FLUX LoRA manipulation techniques including differenc
 - **LoRA MetaEditor**: Direct metadata editing for any LoRA file
 - **LoRA MetaViewer**: Examine LoRA characteristics, metadata, and compatibility
 - **LoRA MetaEditor**: Direct metadata editing for fixing and customizing LoRAs
-- **Universal Compatibility**: Works with LoRAs from any training tool (AI-Toolkit, FluxGym, sd-scripts)
+- **Universal Compatibility**: Works with LoRAs from any training tool (Musubi-Tuner, DiffSynth-Studio)
 - **Automatic Fixes**: Auto-detects and resolves common compatibility issues
 
 *Demo image created using layer-based LoRA merging in the app.<BR>See Loras merged in Credits further down the page.*
@@ -40,8 +40,8 @@ python install.py
 
 This will:
 - ✅ Create a Python virtual environment
-- ✅ Download and set up sd-scripts (sd3 branch with Flux support, pinned to stable commit)
-- ✅ Apply compatibility fixes for FLUX LoRA metadata
+- ✅ Download and set up musubi-tuner (with WAN 2.2 support)
+- ✅ Apply compatibility fixes for WAN 2.2 LoRA metadata
 - ✅ Install all dependencies
 - ✅ Create launcher scripts
 
@@ -82,13 +82,13 @@ Style_LoRA - Character_LoRA = Clean_Style_LoRA
 ```
 Perfect for removing face changes from style LoRAs and creating character-neutral styles.
 
-### Layer Targeting (FLUX)
-Selectively mute specific layers in FLUX LoRAs:
-- **Facial Layers (7,12,16,20)**: Remove face details while keeping style/costume
-- **Aggressive Mode**: Maximum facial identity removal
+### Layer Targeting (WAN 2.2)
+Selectively mute specific layers in WAN 2.2 LoRAs:
+- **Transformer Layers (0-39)**: WAN 2.2 uses 40 transformer layers
 - **Custom Selection**: Choose any combination of available layers
+- **Experimental**: Layer functions still being discovered by the community
 
-Perfect for extracting character costumes without faces (like Gandalf costume without Ian McKellen's face).
+Perfect for isolating specific characteristics or removing unwanted features from trained LoRAs.
 
 ### Layer-Based Merging
 Surgically combine layers from different LoRAs:
@@ -148,7 +148,7 @@ Fix LoRAs that won't merge due to different training tools:
 1. **Auto-detection**: Tool automatically detects and fixes metadata issues
 2. **Manual fixes**: Use LoRA MetaEditor to fix network modules manually
 3. **Mixed dimensions**: Layer-merged LoRAs automatically trigger concat mode
-4. **Universal merging**: Combine LoRAs from AI-Toolkit, FluxGym, sd-scripts seamlessly
+4. **Universal merging**: Combine LoRAs from Musubi-Tuner, DiffSynth-Studio seamlessly
 
 ### Metadata Repair & Customization
 Use the LoRA MetaEditor for advanced metadata management:
@@ -163,17 +163,16 @@ Use the LoRA MetaEditor for advanced metadata management:
 - Create hybrid concepts using selective layers
 - Rescue partially corrupted or overtrained LoRAs
 
-## 📊 FLUX Layer Architecture
+## 📊 WAN 2.2 Layer Architecture
 
-LoRA the Explorer works with FLUX's layer architecture:
-- **Text Encoder (0-11)**: 12 layers
-- **Double Blocks (0-19)**: 20 layers  
-- **Single Blocks (0-37)**: 38 layers
+LoRA the Explorer works with WAN 2.2's transformer architecture:
+- **Transformer Layers (0-39)**: 40 layers total
+- **Dual Architecture**: WAN 2.2 uses separate high-noise and low-noise models
+  - Each LoRA file targets one model (high or low noise)
+  - Process them separately in this tool
+- **Layer Functions**: Being discovered by the community (experimental)
 
-**Known layer functions:**
-- **Layers 7 & 20**: Primary facial structure and details
-- **Layers 12 & 16**: Secondary facial features
-- **Other layers**: Style, composition, lighting (experimental)
+**Note**: WAN 2.2 layer functions are still being researched. Experimentation is encouraged!
 
 ## 💡 Tips & Best Practices
 
@@ -209,15 +208,15 @@ This tool is free to use, modify, and distribute. The goal is to make LoRA manip
 
 ## 🙏 Credits & Dependencies
 
-### sd-scripts Integration
-LoRA the Explorer relies on [sd-scripts by kohya-ss](https://github.com/kohya-ss/sd-scripts) for the core LoRA processing functionality. Our installer automatically downloads the sd3 branch which includes FLUX support.
+### musubi-tuner Integration
+LoRA the Explorer relies on [musubi-tuner by kohya-ss](https://github.com/kohya-ss/musubi-tuner) for the core LoRA processing functionality. Our installer automatically downloads musubi-tuner which includes WAN 2.2 support.
 
-**sd-scripts provides:**
-- FLUX LoRA manipulation capabilities
+**musubi-tuner provides:**
+- WAN 2.2 LoRA manipulation capabilities
 - SafeTensors file handling
 - Core mathematical operations for LoRA algebra
 
-Special thanks to kohya-ss and the sd-scripts community for creating and maintaining this essential toolkit.
+Special thanks to kohya-ss and the musubi-tuner community for creating and maintaining this essential toolkit.
 
 **Demo Image LoRAs:**
 - [Eurasian Golden Oriole](https://civitai.green/models/1668493/eurasian-golden-oriole?modelVersionId=1888520) by hloveex30w126 on CivitAI

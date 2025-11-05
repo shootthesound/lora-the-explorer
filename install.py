@@ -230,117 +230,84 @@ echo "Starting GUI..."
         print("    start_gui.sh - Launch GUI")
 
 def download_sd_scripts():
-    """Download and set up sd-scripts"""
-    sd_scripts_path = Path("sd-scripts")
-    
+    """Download and set up musubi-tuner"""
+    sd_scripts_path = Path("musubi-tuner")
+
     if sd_scripts_path.exists() and (sd_scripts_path / "networks").exists():
-        print(" sd-scripts already installed")
+        print(" musubi-tuner already installed")
         return sd_scripts_path
-    
-    print(" Downloading sd-scripts...")
-    
-    # Clone sd-scripts repository (sd3 branch with Flux support)
+
+    print(" Downloading musubi-tuner...")
+
+    # Clone musubi-tuner repository (WAN 2.2 support)
     clone_result = run_command([
-        "git", "clone", 
-        "-b", "sd3",
-        "https://github.com/kohya-ss/sd-scripts.git", 
-        "sd-scripts"
-    ], "Cloning sd-scripts sd3 branch (Flux support)", check=False)
-    
-    if clone_result.returncode == 0:
-        # Pin to specific commit for version stability
-        print(" Pinning sd-scripts to tested commit...")
-        
-        # Change to sd-scripts directory to run git checkout
-        original_dir = os.getcwd()
-        try:
-            os.chdir("sd-scripts")
-            run_command([
-                "git", "checkout", "3e6935a07edcb944407840ef74fcaf6fcad352f7"
-            ], "Pinning to stable commit", check=False)
-        finally:
-            os.chdir(original_dir)
+        "git", "clone",
+        "https://github.com/kohya-ss/musubi-tuner.git",
+        "musubi-tuner"
+    ], "Cloning musubi-tuner (WAN 2.2 support)", check=False)
     
     if clone_result.returncode != 0:
-        print(" Failed to clone sd-scripts. Trying alternative method...")
-        
+        print(" Failed to clone musubi-tuner. Trying alternative method...")
+
         # Alternative: download as zip
         try:
             import urllib.request
             import zipfile
-            
-            print(" Downloading sd-scripts sd3 branch as ZIP...")
-            url = "https://github.com/kohya-ss/sd-scripts/archive/refs/heads/sd3.zip"
-            zip_path = "sd-scripts-sd3.zip"
-            
+
+            print(" Downloading musubi-tuner as ZIP...")
+            url = "https://github.com/kohya-ss/musubi-tuner/archive/refs/heads/main.zip"
+            zip_path = "musubi-tuner-main.zip"
+
             urllib.request.urlretrieve(url, zip_path)
-            
+
             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                 zip_ref.extractall(".")
-            
+
             # Rename extracted folder
-            if Path("sd-scripts-sd3").exists():
-                Path("sd-scripts-sd3").rename("sd-scripts")
-            
+            if Path("musubi-tuner-main").exists():
+                Path("musubi-tuner-main").rename("musubi-tuner")
+
             # Clean up
             Path(zip_path).unlink()
-            print(" sd-scripts downloaded successfully")
-            
+            print(" musubi-tuner downloaded successfully")
+
         except Exception as e:
-            print(f" Failed to download sd-scripts: {e}")
-            print("   Please manually download from: https://github.com/kohya-ss/sd-scripts")
-            print("   Extract to: ./sd-scripts/")
+            print(f" Failed to download musubi-tuner: {e}")
+            print("   Please manually download from: https://github.com/kohya-ss/musubi-tuner")
+            print("   Extract to: ./musubi-tuner/")
             return None
     
-    # Install sd-scripts requirements and package
+    # Install musubi-tuner requirements and package
     if sd_scripts_path.exists():
-        print(" Installing sd-scripts dependencies...")
+        print(" Installing musubi-tuner dependencies...")
         pip_exe = get_pip_executable()
         python_exe = get_python_executable()
-        
-        # Install sd-scripts requirements
+
+        # Install musubi-tuner requirements
         sd_requirements = sd_scripts_path / "requirements.txt"
         if sd_requirements.exists():
             run_command([
-                str(pip_exe), "install", "-r", str(sd_requirements), "-c", "constraints.txt"
-            ], "Installing sd-scripts requirements", check=False)
+                str(pip_exe), "install", "-r", str(sd_requirements)
+            ], "Installing musubi-tuner requirements", check=False)
         else:
-            print("   Warning: sd-scripts requirements.txt not found")
-        
-        # Install sd-scripts as editable package
-        print(" Installing sd-scripts library...")
+            print("   Warning: musubi-tuner requirements.txt not found")
+
+        # Install musubi-tuner as editable package
+        print(" Installing musubi-tuner library...")
         install_result = run_command([
             str(pip_exe), "install", "-e", str(sd_scripts_path)
-        ], "Installing sd-scripts library", check=False)
-        
+        ], "Installing musubi-tuner library", check=False)
+
         # Verify installation by checking if library module can be imported
-        print(" Verifying sd-scripts installation...")
+        print(" Verifying musubi-tuner installation...")
         verify_result = run_command([
-            str(python_exe), "-c", f"import sys; sys.path.insert(0, '{sd_scripts_path}'); import library.utils; print(' sd-scripts library verified')"
+            str(python_exe), "-c", f"import sys; sys.path.insert(0, '{sd_scripts_path}'); import library.utils; print(' musubi-tuner library verified')"
         ], "Verifying library module", check=False)
-        
+
         if verify_result.returncode == 0:
-            # Apply fix for FLUX LoRA metadata by copying corrected file
-            print("🔧 Applying FLUX metadata fix...")
-            try:
-                import shutil
-                fixed_file = Path("fixed_files") / "flux_merge_lora.py"
-                target_file = sd_scripts_path / "networks" / "flux_merge_lora.py"
-                
-                if fixed_file.exists() and target_file.exists():
-                    shutil.copy2(str(fixed_file), str(target_file))
-                    print(" FLUX metadata fix applied (networks.lora_flux)")
-                elif not fixed_file.exists():
-                    print("  Fixed file not found in fixed_files directory")
-                elif not target_file.exists():
-                    print("  Target file not found in sd-scripts")
-            except Exception as e:
-                print(f"️  Could not apply FLUX metadata fix: {e}")
-                print("   LoRAs may have incorrect network module metadata")
-            
-            print(" sd-scripts setup complete")
+            print(" musubi-tuner setup complete")
         else:
-            print("  sd-scripts installed but library verification failed")
+            print("  musubi-tuner installed but library verification failed")
             print("   This may cause issues with LoRA operations")
         
         return sd_scripts_path
@@ -369,30 +336,30 @@ def main():
     create_launcher_scripts()
     print()
     
-    # Download and set up sd-scripts
+    # Download and set up musubi-tuner
     sd_scripts_path = download_sd_scripts()
     print()
-    
+
     # Success message
     print(" Installation Complete!")
     print("=" * 50)
     print()
     print(" Quick Start:")
-    
+
     if platform.system() == "Windows":
         print("    GUI: Double-click start_gui.bat")
     else:
         print("    GUI: ./start_gui.sh")
-    
+
     print()
     print(" Manual command:")
     python_exe = get_python_executable()
     print(f"    GUI: {python_exe} lora_algebra_gui.py")
     print()
     print("🔗 Project: https://github.com/shootthesound/lora-the-explorer")
-    
+
     if sd_scripts_path:
-        print(f" sd-scripts: {sd_scripts_path.absolute()}")
+        print(f" musubi-tuner: {sd_scripts_path.absolute()}")
     
     print()
 

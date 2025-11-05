@@ -14,31 +14,31 @@ class LoRAProcessor:
     
     def __init__(self, sd_scripts_path: Optional[str] = None):
         """Initialize LoRA processor
-        
+
         Args:
-            sd_scripts_path: Path to sd-scripts directory. If None, looks in parent directory.
+            sd_scripts_path: Path to musubi-tuner directory. If None, looks in parent directory.
         """
         self.sd_scripts_path = self._find_sd_scripts(sd_scripts_path)
-        
+
     def _find_sd_scripts(self, custom_path: Optional[str] = None) -> str:
-        """Find sd-scripts directory"""
+        """Find musubi-tuner directory"""
         if custom_path and os.path.exists(custom_path):
             return custom_path
-            
+
         # Look in common locations
         possible_paths = [
-            "sd-scripts",
-            "../sd-scripts", 
-            "../../sd-scripts",
-            os.path.join(os.path.dirname(__file__), "..", "..", "sd-scripts")
+            "musubi-tuner",
+            "../musubi-tuner",
+            "../../musubi-tuner",
+            os.path.join(os.path.dirname(__file__), "..", "..", "musubi-tuner")
         ]
-        
+
         for path in possible_paths:
             abs_path = os.path.abspath(path)
             if os.path.exists(abs_path) and os.path.exists(os.path.join(abs_path, "networks")):
                 return abs_path
-                
-        raise FileNotFoundError("sd-scripts directory not found. Please specify the path manually.")
+
+        raise FileNotFoundError("musubi-tuner directory not found. Please specify the path manually.")
     
     def extract_metadata(self, lora_path: str) -> Optional[Dict[str, Any]]:
         """Extract metadata from LoRA file
@@ -119,12 +119,12 @@ class LoRAProcessor:
             return None
     
     def _run_sd_script(self, script_name: str, args: list) -> Tuple[bool, str]:
-        """Run an sd-scripts command
-        
+        """Run a musubi-tuner command
+
         Args:
-            script_name: Name of the script (e.g., 'flux_merge_lora.py')
+            script_name: Name of the script (e.g., 'merge_lora.py')
             args: List of arguments to pass to the script
-            
+
         Returns:
             Tuple of (success: bool, output: str)
         """

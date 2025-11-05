@@ -117,7 +117,7 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
         # Header
         gr.HTML("""
         <div class="title">🧭 LoRA the Explorer</div>
-        <div class="subtitle">Advanced FLUX LoRA Manipulation Toolkit</div>
+        <div class="subtitle">Advanced WAN 2.2 LoRA Manipulation Toolkit</div>
         """)
         
         with gr.Tabs() as tabs:
@@ -165,7 +165,7 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
                 **⭐ GitHub**: [github.com/shootthesound/lora-the-explorer](https://github.com/shootthesound/lora-the-explorer)
                 
                 ### Credits
-                LoRA the Explorer relies on [sd-scripts by kohya-ss](https://github.com/kohya-ss/sd-scripts) for core LoRA processing functionality. Our installer automatically downloads the sd3 branch with FLUX support. Special thanks to kohya-ss and the sd-scripts community for this essential toolkit.
+                LoRA the Explorer relies on [musubi-tuner by kohya-ss](https://github.com/kohya-ss/musubi-tuner) for core LoRA processing functionality. Our installer automatically downloads musubi-tuner with WAN 2.2 support. Special thanks to kohya-ss and the musubi-tuner community for this essential toolkit.
                 
                 **Demo Image LoRAs:**
                 - [Eurasian Golden Oriole](https://civitai.green/models/1668493/eurasian-golden-oriole?modelVersionId=1888520) by hloveex30w126 on CivitAI
@@ -638,7 +638,7 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
             # Layer Targeting Tab
             with gr.TabItem("🎯 Layer Targeting"):
                 gr.Markdown("""
-                ### FLUX Layer Targeting
+                ### WAN 2.2 Layer Targeting
                 
                 **Zeros out selected layers to remove unwanted influences from a LoRA.**
 
@@ -959,7 +959,7 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
                 if not output:
                     return "❌ Please specify an output path"
                 
-                # Fix FLUX metadata if needed
+                # Fix WAN 2.2 metadata if needed
                 metadata_fixes_applied = []
                 temp_files_to_cleanup = []
                 
@@ -974,14 +974,14 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
                     # Check for layer-merged LoRAs (informational - subtract always uses concat)
                     has_layer_merged = 'lora_algebra_merge_type' in metadata_a or 'lora_algebra_merge_type' in metadata_b
                     
-                    # Check and fix FLUX metadata if needed
+                    # Check and fix WAN 2.2 metadata if needed
                     def needs_network_fix(metadata):
-                        is_flux = (
-                            'flux' in metadata.get('modelspec.architecture', '').lower() or
-                            metadata.get('ss_base_model_version', '') == 'flux1'
+                        is_wan = (
+                            'wan' in metadata.get('modelspec.architecture', '').lower() or
+                            'wan' in metadata.get('ss_base_model_version', '').lower()
                         )
                         wrong_module = metadata.get('ss_network_module', '') == 'networks.lora'
-                        return is_flux and wrong_module
+                        return is_wan and wrong_module
                     
                     def create_fixed_lora(lora_path, metadata):
                         import tempfile
@@ -999,7 +999,7 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
                         
                         # Fix metadata
                         fixed_metadata = original_metadata.copy()
-                        fixed_metadata['ss_network_module'] = 'networks.lora_flux'
+                        fixed_metadata['ss_network_module'] = 'networks.lora_wan'
                         
                         # Save with fixed metadata
                         save_file(state_dict, temp_path, metadata=fixed_metadata)
@@ -1045,7 +1045,7 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
                         
                         if metadata_fixes_applied:
                             fixed_loras = " & ".join(metadata_fixes_applied)
-                            result_message += f"\n\n🔧 Auto-fixed FLUX metadata for LoRA {fixed_loras} (networks.lora → networks.lora_flux)"
+                            result_message += f"\n\n🔧 Auto-fixed WAN 2.2 metadata for LoRA {fixed_loras} (networks.lora → networks.lora_wan)"
                         
                         return result_message
                     else:
@@ -1053,7 +1053,7 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
                         error_msg = f"❌ Error during subtraction: {message}"
                         if "shape mismatch" in message.lower() or "different dims" in message.lower() or "incompatible" in message.lower():
                             error_msg += "\n\n💡 This likely failed due to incompatibilities between the LoRAs."
-                            error_msg += "\n   Try using different LoRAs or check that both are compatible FLUX LoRAs."
+                            error_msg += "\n   Try using different LoRAs or check that both are compatible WAN 2.2 LoRAs."
                             if has_layer_merged:
                                 error_msg += "\n   (Layer-merged LoRA detected - these can sometimes have compatibility issues)"
                         return error_msg
@@ -1171,14 +1171,14 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
                             auto_concat_enabled = True
                             auto_concat_reason = "layer-merged LoRA detected"
                     
-                    # Check and fix FLUX metadata if needed
+                    # Check and fix WAN 2.2 metadata if needed
                     def needs_network_fix(metadata):
-                        is_flux = (
-                            'flux' in metadata.get('modelspec.architecture', '').lower() or
-                            metadata.get('ss_base_model_version', '') == 'flux1'
+                        is_wan = (
+                            'wan' in metadata.get('modelspec.architecture', '').lower() or
+                            'wan' in metadata.get('ss_base_model_version', '').lower()
                         )
                         wrong_module = metadata.get('ss_network_module', '') == 'networks.lora'
-                        return is_flux and wrong_module
+                        return is_wan and wrong_module
                     
                     def create_fixed_lora(lora_path, metadata):
                         import tempfile
@@ -1197,7 +1197,7 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
                         
                         # Fix metadata
                         fixed_metadata = original_metadata.copy()
-                        fixed_metadata['ss_network_module'] = 'networks.lora_flux'
+                        fixed_metadata['ss_network_module'] = 'networks.lora_wan'
                         
                         # Save with fixed metadata
                         save_file(state_dict, temp_path, metadata=fixed_metadata)
@@ -1246,14 +1246,14 @@ def create_gui(sd_scripts_path: Optional[str] = None) -> gr.Blocks:
                         
                         if metadata_fixes_applied:
                             fixed_loras = " & ".join(metadata_fixes_applied)
-                            result_message += f"\n\n🔧 Auto-fixed FLUX metadata for LoRA {fixed_loras} (networks.lora → networks.lora_flux)"
+                            result_message += f"\n\n🔧 Auto-fixed WAN 2.2 metadata for LoRA {fixed_loras} (networks.lora → networks.lora_wan)"
                         
                         return result_message
                     else:
                         # Enhanced error message with helpful suggestions
                         error_msg = f"❌ Error during merge: {message}"
                         error_msg += "\n\n💡 This likely failed due to incompatibilities between the LoRAs."
-                        error_msg += "\n   Try enabling concat mode, or use the MetaViewer tab to be sure both are Flux LoRAs."
+                        error_msg += "\n   Try enabling concat mode, or use the MetaViewer tab to be sure both are WAN 2.2 LoRAs."
                         return error_msg
                         
                 except Exception as merge_error:

@@ -17,13 +17,13 @@ def main():
     try:
         from lora_algebra.gui import launch_gui
         
-        # Look for sd-scripts (should be installed locally)
-        sd_scripts_path = os.path.abspath("sd-scripts")
-        
+        # Look for musubi-tuner (should be installed locally)
+        sd_scripts_path = os.path.abspath("musubi-tuner")
+
         if not os.path.exists(sd_scripts_path) or not os.path.exists(os.path.join(sd_scripts_path, "networks")):
-            print("⚠️  Warning: sd-scripts not found.")
+            print("⚠️  Warning: musubi-tuner not found.")
             print("   Please run 'python install.py' first to set up dependencies.")
-            print("   Some features may not work without sd-scripts.")
+            print("   Some features may not work without musubi-tuner.")
             print()
             sd_scripts_path = None
         
